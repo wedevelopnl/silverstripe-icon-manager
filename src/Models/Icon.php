@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheWebmen\IconManager\Models;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
