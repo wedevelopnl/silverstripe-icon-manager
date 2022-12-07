@@ -7,29 +7,20 @@ use TheWebmen\IconManager\Models\Icon;
 
 class IconModelAdmin extends ModelAdmin
 {
-    /**
-     * @var string
-     * @config
-     */
-    private static $url_segment = 'icons';
+    /** @config */
+    private static string $url_segment = 'icons';
+
+    /** @config */
+    private static string $menu_title = 'Custom icons';
+
+    /** @config */
+    private static string $menu_icon_class = 'font-icon-pencil';
 
     /**
-     * @var string
+     * @var string[]
      * @config
      */
-    private static $menu_title = 'Custom icons';
-
-    /**
-     * @var string
-     * @config
-     */
-    private static $menu_icon_class = 'font-icon-pencil';
-
-    /**
-     * @var array
-     * @config
-     */
-    private static $managed_models = [
+    private static array $managed_models = [
         Icon::class,
     ];
 }

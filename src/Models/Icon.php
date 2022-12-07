@@ -13,61 +13,49 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
 
 class Icon extends DataObject
 {
-    /**
-     * @var string
-     * @config
-     */
-    private static $table_name = 'TheWebmen_Icon';
+    /** @config */
+    private static string $table_name = 'TheWebmen_Icon';
+
+    /** @config */
+    private static string $singular_name = 'Icon';
+
+    /** @config */
+    private static string $plural_name = 'Icons';
 
     /**
-     * @var string
+     * @var array<string, string>
      * @config
      */
-    private static $singular_name = 'Icon';
-
-    /**
-     * @var string
-     * @config
-     */
-    private static $plural_name = 'Icons';
-
-    /**
-     * @var array
-     * @config
-     */
-    private static $db = [
+    private static string $db = [
         'Title' => 'Varchar(255)',
     ];
 
     /**
-     * @var array
+     * @var array<string, string>
      * @config
      */
-    private static $has_one = [
+    private static array $has_one = [
         'Icon' => File::class,
     ];
 
     /**
-     * @var array
+     * @var string[]
      * @config
      */
-    private static $owns = [
+    private static array $owns = [
         'Icon',
     ];
 
     /**
-     * @var array
+     * @var array<string, string>
      * @config
      */
-    private static $summary_fields = [
-        'Title',
+    private static array $summary_fields = [
+        'Title' => 'Title',
         'getPreview' => 'Preview',
     ];
 
-    /**
-     * @return FieldList
-     */
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $fields = parent::getCMSFields();
 
@@ -87,19 +75,16 @@ class Icon extends DataObject
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
-    public function searchableFields()
+    public function searchableFields(): array
     {
         $fields = parent::searchableFields();
         unset($fields['getPreview']);
         return $fields;
     }
 
-    /**
-     * @return string
-     */
-    public function forTemplate()
+    public function forTemplate(): string
     {
         if (!$this->Icon()) {
             return '';
@@ -107,18 +92,12 @@ class Icon extends DataObject
         return $this->Icon()->getString();
     }
 
-    /**
-     * @return DBField
-     */
-    public function getPreview()
+    public function getPreview(): DBField
     {
         return DBField::create_field(DBHTMLText::class, '<span style="width: 24px; display: inline-block;">' . $this->forTemplate() . '</span>');
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         if ($this->IconID) {
             /** @var File|null $file */
