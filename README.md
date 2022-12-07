@@ -29,3 +29,5 @@ See read our [contributing](CONTRIBUTING.md) document for more information.
 ### Getting started
 We advise to use [Docker](https://docker.com)/[Docker compose](https://docs.docker.com/compose/) for development.\
 We also included a [Makefile](https://www.gnu.org/software/make/) to simplify some commands
+
+Our development container contains some built-in tools like `PHPCSFixer`.
