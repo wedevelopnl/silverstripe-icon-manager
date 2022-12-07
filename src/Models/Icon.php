@@ -15,21 +15,25 @@ class Icon extends DataObject
 {
     /**
      * @var string
+     * @config
      */
     private static $table_name = 'TheWebmen_Icon';
 
     /**
      * @var string
+     * @config
      */
     private static $singular_name = 'Icon';
 
     /**
      * @var string
+     * @config
      */
     private static $plural_name = 'Icons';
 
     /**
      * @var array
+     * @config
      */
     private static $db = [
         'Title' => 'Varchar(255)',
@@ -37,6 +41,7 @@ class Icon extends DataObject
 
     /**
      * @var array
+     * @config
      */
     private static $has_one = [
         'Icon' => File::class,
@@ -44,6 +49,7 @@ class Icon extends DataObject
 
     /**
      * @var array
+     * @config
      */
     private static $owns = [
         'Icon',
@@ -51,6 +57,7 @@ class Icon extends DataObject
 
     /**
      * @var array
+     * @config
      */
     private static $summary_fields = [
         'Title',
