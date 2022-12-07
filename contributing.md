@@ -16,4 +16,4 @@ If the issue does look like a new bug:
 Please report security issues to the module maintainers directly. Please don't file security issues in the bugtracker.
 
 ## Copyright
-By supplying code to this module in any form you agree to assign copyright of that code to Webmen, on the condition that Webmen releases that code under a form of open source license.
+By supplying code to this module in any form you agree to assign copyright of that code to WeDevelop, on the condition that WeDevelop releases that code under a form of open source license.

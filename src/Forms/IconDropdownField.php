@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TheWebmen\IconManager\Forms;
+namespace WeDevelop\IconManager\Forms;
 
 use SilverStripe\Forms\DropdownField;
-use TheWebmen\IconManager\Models\Icon;
+use WeDevelop\IconManager\Models\Icon;
 
 class IconDropdownField extends DropdownField
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace TheWebmen\IconManager\Admins;
+namespace WeDevelop\IconManager\Admins;
 
 use SilverStripe\Admin\ModelAdmin;
-use TheWebmen\IconManager\Models\Icon;
+use WeDevelop\IconManager\Models\Icon;
 
 class IconModelAdmin extends ModelAdmin
 {

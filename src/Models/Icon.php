@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TheWebmen\IconManager\Models;
+namespace WeDevelop\IconManager\Models;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
@@ -16,19 +16,13 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
 class Icon extends DataObject
 {
     /** @config */
-    private static string $table_name = 'TheWebmen_Icon';
+    private static $singular_name = 'Icon';
 
     /** @config */
-    private static string $singular_name = 'Icon';
+    private static $plural_name = 'Icons';
 
     /** @config */
-    private static string $plural_name = 'Icons';
-
-    /**
-     * @var array<string, string>
-     * @config
-     */
-    private static string $db = [
+    private static $db = [
         'Title' => 'Varchar(255)',
     ];
 
