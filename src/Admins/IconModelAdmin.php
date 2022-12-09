@@ -1,31 +1,28 @@
 <?php
 
-namespace TheWebmen\IconManager\Admins;
+declare(strict_types=1);
+
+namespace WeDevelop\IconManager\Admins;
 
 use SilverStripe\Admin\ModelAdmin;
-use TheWebmen\IconManager\Models\Icon;
+use WeDevelop\IconManager\Models\Icon;
 
 class IconModelAdmin extends ModelAdmin
 {
-    /**
-     * @var string
-     */
-    private static $url_segment = 'icons';
+    /** @config */
+    private static string $url_segment = 'icons';
+
+    /** @config */
+    private static string $menu_title = 'Custom icons';
+
+    /** @config */
+    private static string $menu_icon_class = 'font-icon-pencil';
 
     /**
-     * @var string
+     * @var array<string>
+     * @config
      */
-    private static $menu_title = 'Custom icons';
-
-    /**
-     * @var string
-     */
-    private static $menu_icon_class = 'font-icon-pencil';
-
-    /**
-     * @var array
-     */
-    private static $managed_models = [
+    private static array $managed_models = [
         Icon::class,
     ];
 }

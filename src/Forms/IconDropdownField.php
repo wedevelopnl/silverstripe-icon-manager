@@ -1,17 +1,17 @@
 <?php
 
-namespace TheWebmen\IconManager\Forms;
+declare(strict_types=1);
+
+namespace WeDevelop\IconManager\Forms;
 
 use SilverStripe\Forms\DropdownField;
-use TheWebmen\IconManager\Models\Icon;
+use WeDevelop\IconManager\Models\Icon;
 
 class IconDropdownField extends DropdownField
 {
     public function __construct($name, $title = 'Icon')
     {
-        $source = Icon::get()->map();
-
-        parent::__construct($name, $title, $source);
+        parent::__construct($name, $title, Icon::get()->map());
         $this->setHasEmptyDefault(true);
     }
 }
