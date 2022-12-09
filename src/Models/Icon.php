@@ -20,13 +20,13 @@ use SilverStripe\View\Html;
 class Icon extends DataObject
 {
     /** @config */
-    private static $singular_name = 'Icon';
+    private static string $singular_name = 'Icon';
 
     /** @config */
-    private static $plural_name = 'Icons';
+    private static string$plural_name = 'Icons';
 
     /** @config */
-    private static $db = [
+    private static array $db = [
         'Title' => 'Varchar(255)',
     ];
 

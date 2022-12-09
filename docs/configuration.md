@@ -4,7 +4,7 @@
 To use a Icon , you can just set a `$has_one` or `$has_many` relation to the Icon class;
 
 ```
-    $has_one = [ 'Icon' => Icon::class ]
+$has_one = [ 'Icon' => Icon::class ]
 ```
 
 There is a `IconDropdownField` FormField that can used as following;
@@ -17,8 +17,8 @@ Simple complete example to use a icon for every page;
 <?php
 
 use SilverStripe\CMS\Model\SiteTree;
-use TheWebmen\IconManager\Forms\IconDropdownField;
-use TheWebmen\IconManager\Models\Icon;
+use WeDevelop\IconManager\Forms\IconDropdownField;
+use WeDevelop\IconManager\Models\Icon;
 
 class Page extends SiteTree
 {

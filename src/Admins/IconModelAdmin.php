@@ -19,7 +19,7 @@ class IconModelAdmin extends ModelAdmin
     private static string $menu_icon_class = 'font-icon-pencil';
 
     /**
-     * @var string[]
+     * @var array<string>
      * @config
      */
     private static array $managed_models = [
