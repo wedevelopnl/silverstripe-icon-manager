@@ -99,4 +99,24 @@ class Icon extends DataObject
             'style' => 'width: 24px; display: inline-block',
         ], $this->forTemplate()));
     }
+
+    /**
+     * Exists to support migration from the old model.
+     *
+     * @todo remove this when the migration task gets removed.
+     * @internal
+     *
+     * @param array{ID: int, ClassName: string, LastEdited: string, Created: string, Title: string, IconID: int} $data
+     */
+    public static function createFromOldDataset(array $data): self
+    {
+        return self::create([
+            'ID' => $data['ID'],
+            'ClassName' => self::class,
+            'LastEdited' => $data['LastEdited'],
+            'Created' => $data['Created'],
+            'Title' => $data['Title'],
+            'IconID' => $data['IconID'],
+        ]);
+    }
 }
