@@ -39,7 +39,7 @@ class Icon extends DataObject
     ];
 
     /**
-     * @var string[]
+     * @var array<string>
      * @config
      */
     private static array $owns = [
