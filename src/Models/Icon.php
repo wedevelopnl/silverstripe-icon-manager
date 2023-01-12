@@ -89,7 +89,7 @@ class Icon extends DataObject
         return $fields;
     }
 
-    public function forTemplate(): string
+    public function forTemplate(): ?string
     {
         return $this->Icon() ? $this->Icon()->getString() : '';
     }
