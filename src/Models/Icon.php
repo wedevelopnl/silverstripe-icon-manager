@@ -16,6 +16,7 @@ use SilverStripe\View\Html;
 
 /**
  * @param int IconID
+ * @method File Icon()
  */
 class Icon extends DataObject
 {
@@ -90,7 +91,7 @@ class Icon extends DataObject
 
     public function forTemplate(): string
     {
-        return $this->Icon()?->getString() ?? '';
+        return $this->Icon() ? $this->Icon()->getString() : '';
     }
 
     public function getPreview(): DBField
