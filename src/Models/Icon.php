@@ -6,13 +6,12 @@ namespace WeDevelop\IconManager\Models;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
-use SilverStripe\Forms\HeaderField;
-use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\View\Html;
+use SilverStripe\AssetAdmin\Model\ThumbnailGenerator;
 
 /**
  * @param int IconID
@@ -24,7 +23,7 @@ class Icon extends DataObject
     private static string $singular_name = 'Icon';
 
     /** @config */
-    private static string$plural_name = 'Icons';
+    private static string $plural_name = 'Icons';
 
     /** @config */
     private static array $db = [
@@ -56,6 +55,19 @@ class Icon extends DataObject
         'getPreview' => 'Preview',
     ];
 
+    /**
+     * @var array<string, string>
+     * @config
+     */
+    private static array $dependencies = [
+        'ThumbnailGenerator' => '%$' . ThumbnailGenerator::class,
+    ];
+
+    /**
+     * @var ThumbnailGenerator
+     */
+    public $thumbnailGenerator;
+
     public function getCMSFields(): FieldList
     {
         $fields = parent::getCMSFields();
@@ -64,16 +76,7 @@ class Icon extends DataObject
         $imageField = $fields->dataFieldByName('Icon');
         if ($imageField !== null) {
             $imageField->setFolderName('Icons');
-            $imageField->setAllowedExtensions(['svg']);
-            $imageField->setDescription('Only SVG files are allowed');
-        }
-
-        $iconSvg = $this->forTemplate();
-        if (!empty($iconSvg)) {
-            $fields->addFieldToTab('Root.Main', HeaderField::create('PreviewHeader', 'Preview:', 3));
-            $fields->addFieldToTab('Root.Main', LiteralField::create('Preview', Html::createTag('div', [
-                'style' => 'max-width: 20px',
-            ], $iconSvg)));
+            $imageField->setAllowedFileCategories('wedevelop/icon');
         }
 
         return $fields;
@@ -89,16 +92,23 @@ class Icon extends DataObject
         return $fields;
     }
 
+    /**
+     * @deprecated 2.0.1 Call the `getTag` method straight on the Icon object
+     */
     public function forTemplate(): ?string
     {
-        return $this->Icon() ? $this->Icon()->getString() : '';
+        return $this->Icon->getTag();
     }
 
     public function getPreview(): DBField
     {
-        return DBField::create_field(DBHTMLText::class, Html::createTag('span', [
-            'style' => 'width: 24px; display: inline-block',
-        ], $this->forTemplate()));
+        $width =  UploadField::config()->get('thumbnail_width');
+        $height = UploadField::config()->get('thumbnail_height');
+
+        return DBField::create_field(DBHTMLText::class, Html::createTag('img', [
+            'src' => $this->thumbnailGenerator->generateThumbnailLink($this->Icon->File, (int)$width, (int)$height),
+            'style' => 'width: ' . $width . '; height: ' . $height . '; display: inline-block',
+        ]), '');
     }
 
     /**
@@ -119,5 +129,15 @@ class Icon extends DataObject
             'Title' => $data['Title'],
             'IconID' => $data['IconID'],
         ]);
+    }
+
+    /**
+     * @param ThumbnailGenerator $generator
+     * @return $this
+     */
+    public function setThumbnailGenerator(ThumbnailGenerator $generator)
+    {
+        $this->thumbnailGenerator = $generator;
+        return $this;
     }
 }
