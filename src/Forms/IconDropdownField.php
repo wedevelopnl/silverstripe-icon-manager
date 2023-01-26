@@ -11,7 +11,7 @@ class IconDropdownField extends DropdownField
 {
     public function __construct($name, $title = 'Icon')
     {
-        parent::__construct($name, $title, Icon::get()->map());
+        parent::__construct($name, $title, Icon::get()->Sort('Title')->map());
         $this->setHasEmptyDefault(true);
     }
 }
