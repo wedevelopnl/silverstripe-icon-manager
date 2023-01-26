@@ -25,7 +25,10 @@ class Icon extends DataObject
     /** @config */
     private static string $plural_name = 'Icons';
 
-    /** @config */
+    /** 
+     * @var array<string, string>
+     * @config
+     */
     private static array $db = [
         'Title' => 'Varchar(255)',
     ];
@@ -63,10 +66,7 @@ class Icon extends DataObject
         'ThumbnailGenerator' => '%$' . ThumbnailGenerator::class,
     ];
 
-    /**
-     * @var ThumbnailGenerator
-     */
-    public $thumbnailGenerator;
+    public ThumbnailGenerator $thumbnailGenerator;
 
     public function getCMSFields(): FieldList
     {
@@ -131,11 +131,7 @@ class Icon extends DataObject
         ]);
     }
 
-    /**
-     * @param ThumbnailGenerator $generator
-     * @return $this
-     */
-    public function setThumbnailGenerator(ThumbnailGenerator $generator)
+    public function setThumbnailGenerator(ThumbnailGenerator $generator): self
     {
         $this->thumbnailGenerator = $generator;
         return $this;
