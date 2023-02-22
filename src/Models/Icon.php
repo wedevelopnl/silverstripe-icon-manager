@@ -14,8 +14,11 @@ use SilverStripe\View\HTML;
 use SilverStripe\AssetAdmin\Model\ThumbnailGenerator;
 
 /**
- * @param int IconID
+ * @property int $IconID
+ * @property File $Icon
  * @method File Icon()
+ *
+ * @phpstan-import-type OldIconShape from \WeDevelop\IconManager\Tasks\MigrateToNewIconModelTask
  */
 class Icon extends DataObject
 {
@@ -106,7 +109,7 @@ class Icon extends DataObject
         $height = UploadField::config()->get('thumbnail_height');
 
         return DBField::create_field(DBHTMLText::class, HTML::createTag('img', [
-            'src' => $this->thumbnailGenerator->generateThumbnailLink($this->Icon->File, (int)$width, (int)$height),
+            'src' => $this->thumbnailGenerator->generateThumbnailLink($this->Icon->File, intval($width), intval($height)),
             'style' => 'width: ' . $width . '; height: ' . $height . '; display: inline-block',
         ]), '');
     }
@@ -117,7 +120,7 @@ class Icon extends DataObject
      * @todo remove this when the migration task gets removed.
      * @internal
      *
-     * @param array{ID: int, ClassName: string, LastEdited: string, Created: string, Title: string, IconID: int} $data
+     * @param OldIconShape $data
      */
     public static function createFromOldDataset(array $data): self
     {
