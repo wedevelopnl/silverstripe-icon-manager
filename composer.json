@@ -2,12 +2,6 @@
     "name": "wedevelopnl/silverstripe-icon-manager",
     "description": "Silverstripe module to upload and manager custom icons to use in SilverStripe",
     "type": "silverstripe-vendormodule",
-    "repositories": [
-        {
-            "url": "https://github.com/wedevelopnl/silverstripe-svg-image.git",
-            "type": "git"
-        }
-    ],
     "keywords": [
         "silverstripe"
     ],
@@ -21,7 +15,7 @@
     "require": {
         "php": ">=7.4",
         "silverstripe/cms": "^4@stable",
-        "wedevelopnl/silverstripe-svg-image": "dev-main"
+        "wedevelopnl/silverstripe-svg-image": "^1@stable"
     },
     "autoload": {
         "psr-4": {
