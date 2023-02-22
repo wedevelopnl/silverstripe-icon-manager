@@ -10,7 +10,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
-use SilverStripe\View\Html;
+use SilverStripe\View\HTML;
 use SilverStripe\AssetAdmin\Model\ThumbnailGenerator;
 
 /**
@@ -105,7 +105,7 @@ class Icon extends DataObject
         $width =  UploadField::config()->get('thumbnail_width');
         $height = UploadField::config()->get('thumbnail_height');
 
-        return DBField::create_field(DBHTMLText::class, Html::createTag('img', [
+        return DBField::create_field(DBHTMLText::class, HTML::createTag('img', [
             'src' => $this->thumbnailGenerator->generateThumbnailLink($this->Icon->File, (int)$width, (int)$height),
             'style' => 'width: ' . $width . '; height: ' . $height . '; display: inline-block',
         ]), '');
