@@ -28,7 +28,7 @@ class Icon extends DataObject
     /** @config */
     private static string $plural_name = 'Icons';
 
-    /** 
+    /**
      * @var array<string, string>
      * @config
      */
