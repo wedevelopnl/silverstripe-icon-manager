@@ -14,6 +14,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=7.4",
+        "silverstripe/asset-admin": "^1@stable",
         "silverstripe/cms": "^4@stable",
         "wedevelopnl/silverstripe-svg-image": "^1@stable"
     },
