@@ -24,7 +24,7 @@ class MigrateToNewIconModelTask extends BuildTask
     public function run($request)
     {
         /** @var array<OldIconShape> $oldIcons */
-        $oldIcons = (new SQLSelect('', 'TheWebmen_Icon'))->execute();
+        $oldIcons = (new SQLSelect('*', 'TheWebmen_Icon'))->execute();
         foreach ($oldIcons as $oldIcon) {
             Icon::createFromOldDataset($oldIcon)->write();
         }
