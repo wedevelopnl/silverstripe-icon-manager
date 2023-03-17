@@ -1,0 +1,11 @@
+---
+Name: silverstripeiconmanager-assetsfiletypes
+After:
+  - '#assetsfiletypes'
+  - '#silverstripesvgimage-assetsfiletypes'
+---
+
+SilverStripe\Assets\File:
+  app_categories:
+    'wedevelop/icon':
+      - svg

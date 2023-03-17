@@ -14,7 +14,8 @@
     "prefer-stable": true,
     "require": {
         "php": ">=7.4",
-        "silverstripe/cms": "^4@stable"
+        "silverstripe/cms": "^4@stable",
+        "wedevelopnl/silverstripe-svg-image": "^1@stable"
     },
     "autoload": {
         "psr-4": {

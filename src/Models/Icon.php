@@ -6,17 +6,19 @@ namespace WeDevelop\IconManager\Models;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
-use SilverStripe\Forms\HeaderField;
-use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
-use SilverStripe\View\Html;
+use SilverStripe\View\HTML;
+use SilverStripe\AssetAdmin\Model\ThumbnailGenerator;
 
 /**
- * @param int IconID
+ * @property int $IconID
+ * @property File $Icon
  * @method File Icon()
+ *
+ * @phpstan-import-type OldIconShape from \WeDevelop\IconManager\Tasks\MigrateToNewIconModelTask
  */
 class Icon extends DataObject
 {
@@ -24,9 +26,12 @@ class Icon extends DataObject
     private static string $singular_name = 'Icon';
 
     /** @config */
-    private static string$plural_name = 'Icons';
+    private static string $plural_name = 'Icons';
 
-    /** @config */
+    /** 
+     * @var array<string, string>
+     * @config
+     */
     private static array $db = [
         'Title' => 'Varchar(255)',
     ];
@@ -56,6 +61,16 @@ class Icon extends DataObject
         'getPreview' => 'Preview',
     ];
 
+    /**
+     * @var array<string, string>
+     * @config
+     */
+    private static array $dependencies = [
+        'ThumbnailGenerator' => '%$' . ThumbnailGenerator::class,
+    ];
+
+    public ThumbnailGenerator $thumbnailGenerator;
+
     public function getCMSFields(): FieldList
     {
         $fields = parent::getCMSFields();
@@ -64,16 +79,7 @@ class Icon extends DataObject
         $imageField = $fields->dataFieldByName('Icon');
         if ($imageField !== null) {
             $imageField->setFolderName('Icons');
-            $imageField->setAllowedExtensions(['svg']);
-            $imageField->setDescription('Only SVG files are allowed');
-        }
-
-        $iconSvg = $this->forTemplate();
-        if (!empty($iconSvg)) {
-            $fields->addFieldToTab('Root.Main', HeaderField::create('PreviewHeader', 'Preview:', 3));
-            $fields->addFieldToTab('Root.Main', LiteralField::create('Preview', Html::createTag('div', [
-                'style' => 'max-width: 20px',
-            ], $iconSvg)));
+            $imageField->setAllowedFileCategories('wedevelop/icon');
         }
 
         return $fields;
@@ -89,16 +95,23 @@ class Icon extends DataObject
         return $fields;
     }
 
+    /**
+     * @deprecated 2.0.1 Call the `getTag` method straight on the Icon object
+     */
     public function forTemplate(): ?string
     {
-        return $this->Icon() ? $this->Icon()->getString() : '';
+        return $this->Icon->getTag();
     }
 
     public function getPreview(): DBField
     {
-        return DBField::create_field(DBHTMLText::class, Html::createTag('span', [
-            'style' => 'width: 24px; display: inline-block',
-        ], $this->forTemplate()));
+        $width =  UploadField::config()->get('thumbnail_width');
+        $height = UploadField::config()->get('thumbnail_height');
+
+        return DBField::create_field(DBHTMLText::class, HTML::createTag('img', [
+            'src' => $this->thumbnailGenerator->generateThumbnailLink($this->Icon->File, intval($width), intval($height)),
+            'style' => 'width: ' . $width . '; height: ' . $height . '; display: inline-block',
+        ]), '');
     }
 
     /**
@@ -107,7 +120,7 @@ class Icon extends DataObject
      * @todo remove this when the migration task gets removed.
      * @internal
      *
-     * @param array{ID: int, ClassName: string, LastEdited: string, Created: string, Title: string, IconID: int} $data
+     * @param OldIconShape $data
      */
     public static function createFromOldDataset(array $data): self
     {
@@ -119,5 +132,11 @@ class Icon extends DataObject
             'Title' => $data['Title'],
             'IconID' => $data['IconID'],
         ]);
+    }
+
+    public function setThumbnailGenerator(ThumbnailGenerator $generator): self
+    {
+        $this->thumbnailGenerator = $generator;
+        return $this;
     }
 }
