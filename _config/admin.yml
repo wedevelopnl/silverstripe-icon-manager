@@ -1,0 +1,6 @@
+---
+Name: silverstripe-icon-manager_admin
+---
+SilverStripe\Admin\LeftAndMain:
+  extra_requirements_css:
+    - 'wedevelopnl/silverstripe-icon-manager: client/dist/silverstripe-icon-manager.css'
