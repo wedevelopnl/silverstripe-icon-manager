@@ -1,0 +1,5 @@
+[data-class="WeDevelop\\IconManager\\Models\\Icon"] .col-getPreview img,
+[data-class="WeDevelop\\IconManager\\Models\\Icon"] .col-getPreview svg {
+    max-width: 24px;
+    max-height: 24px;
+}

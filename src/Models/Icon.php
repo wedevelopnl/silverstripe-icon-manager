@@ -10,8 +10,6 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\FieldType\DBHTMLText;
-use SilverStripe\View\HTML;
-use SilverStripe\AssetAdmin\Model\ThumbnailGenerator;
 
 /**
  * @property int $IconID
@@ -61,16 +59,6 @@ class Icon extends DataObject
         'getPreview' => 'Preview',
     ];
 
-    /**
-     * @var array<string, string>
-     * @config
-     */
-    private static array $dependencies = [
-        'ThumbnailGenerator' => '%$' . ThumbnailGenerator::class,
-    ];
-
-    public ThumbnailGenerator $thumbnailGenerator;
-
     public function getCMSFields(): FieldList
     {
         $fields = parent::getCMSFields();
@@ -105,13 +93,7 @@ class Icon extends DataObject
 
     public function getPreview(): DBField
     {
-        $width =  UploadField::config()->get('thumbnail_width');
-        $height = UploadField::config()->get('thumbnail_height');
-
-        return DBField::create_field(DBHTMLText::class, HTML::createTag('img', [
-            'src' => $this->thumbnailGenerator->generateThumbnailLink($this->Icon->File, intval($width), intval($height)),
-            'style' => 'width: ' . $width . '; height: ' . $height . '; display: inline-block',
-        ]), '');
+        return DBField::create_field(DBHTMLText::class, $this->Icon->getTag());
     }
 
     /**
@@ -132,11 +114,5 @@ class Icon extends DataObject
             'Title' => $data['Title'],
             'IconID' => $data['IconID'],
         ]);
-    }
-
-    public function setThumbnailGenerator(ThumbnailGenerator $generator): self
-    {
-        $this->thumbnailGenerator = $generator;
-        return $this;
     }
 }

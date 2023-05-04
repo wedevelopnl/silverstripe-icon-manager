@@ -30,6 +30,9 @@
         "allow-plugins": {
             "composer/installers": false,
             "silverstripe/vendor-plugin": false
-        }
+        },
+        "expose": [
+            "client/dist"
+        ]
     }
 }
