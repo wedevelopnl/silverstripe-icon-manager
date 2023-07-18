@@ -16,7 +16,7 @@
         "php": "^8.1",
         "silverstripe/asset-admin": "^2.0",
         "silverstripe/cms": "^5",
-        "wedevelopnl/silverstripe-svg-image": "dev-feature/ss-5"
+        "wedevelopnl/silverstripe-svg-image": "^2.0"
     },
     "autoload": {
         "psr-4": {
