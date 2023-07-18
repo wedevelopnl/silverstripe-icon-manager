@@ -1,6 +1,6 @@
 {
     "name": "wedevelopnl/silverstripe-icon-manager",
-    "description": "Silverstripe module to upload and manager custom icons to use in SilverStripe",
+    "description": "Silverstripe module to upload and manage custom icons to use in SilverStripe",
     "type": "silverstripe-vendormodule",
     "keywords": [
         "silverstripe"
@@ -13,10 +13,10 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": ">=7.4",
-        "silverstripe/asset-admin": "^1@stable",
-        "silverstripe/cms": "^4@stable",
-        "wedevelopnl/silverstripe-svg-image": "^1@stable"
+        "php": "^8.1",
+        "silverstripe/asset-admin": "^2.0",
+        "silverstripe/cms": "^5",
+        "wedevelopnl/silverstripe-svg-image": "^2"
     },
     "autoload": {
         "psr-4": {
@@ -24,7 +24,7 @@
         }
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.4"
+        "friendsofphp/php-cs-fixer": "^3.20"
     },
     "config": {
         "allow-plugins": {
