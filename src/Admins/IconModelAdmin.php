@@ -13,7 +13,7 @@ class IconModelAdmin extends ModelAdmin
     private static string $url_segment = 'icons';
 
     /** @config */
-    private static string $menu_title = 'Custom icons';
+    private static string $menu_title = 'Icons';
 
     /** @config */
     private static string $menu_icon_class = 'font-icon-pencil';
