@@ -12,8 +12,6 @@
         url: `${e.currentTarget.dataset.iconPreviewEndpoint}?icon=${selectedIcon}`,
         method: 'GET',
         success: function(response) {
-          var innerHTML = response;
-
           literalPreviewField.html(response);
         }
       });
