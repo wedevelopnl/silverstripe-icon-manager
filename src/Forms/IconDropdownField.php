@@ -47,7 +47,7 @@ class IconDropdownField extends DropdownField
 
     public function Field($properties = []): DBHTMLText
     {
-        Requirements::javascript('wedevelopnl/silverstripe-icon-manager:client/js/icondropdownfield.js');
+        Requirements::javascript('wedevelopnl/silverstripe-icon-manager:client/dist/icondropdownfield.js');
 
         $this->setAttribute('data-icon-preview-endpoint', $this->Link('preview'));
 
