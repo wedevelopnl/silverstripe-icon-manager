@@ -1,0 +1,29 @@
+// Four backslashes, not two: Sass's own re-serialization of this attribute
+// selector emits one CSS-escape level fewer than it consumes, so this needs to
+// over-escape here to leave a correctly-escaped `\\` (one literal backslash) in
+// the compiled CSS. Verified against sass-embedded's compiled output directly —
+// two backslashes here compiles away to zero in the final selector, silently
+// breaking the match against the real `data-class="WeDevelop\IconManager\Models\Icon"`
+// attribute (GridField.php sets it from the raw, unescaped FQCN).
+[data-class="WeDevelop\\\\IconManager\\\\Models\\\\Icon"] {
+  .col-getPreview {
+    img,
+    svg {
+      max-width: 24px;
+      max-height: 24px;
+    }
+  }
+}
+
+.icon-preview-holder {
+  margin-top: 5px;
+  padding: 16px;
+  border: 1px solid rgb(219 224 233);
+  border-radius: 4px;
+  background-color: rgb(255 255 255);
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}

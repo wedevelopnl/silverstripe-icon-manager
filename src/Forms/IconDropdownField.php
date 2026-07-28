@@ -26,7 +26,7 @@ class IconDropdownField extends DropdownField
 
         $this->setHasEmptyDefault(true);
 
-        Requirements::javascript('wedevelopnl/silverstripe-icon-manager:client/dist/icondropdownfield.js');
+        Requirements::javascript('wedevelopnl/silverstripe-icon-manager:client/dist/js/bundle.js');
     }
 
     public function preview(): string
