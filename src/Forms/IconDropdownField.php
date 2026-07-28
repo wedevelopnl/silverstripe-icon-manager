@@ -61,6 +61,9 @@ class IconDropdownField extends DropdownField
 
         // Link() throws when the field is not attached to a form. The preview
         // endpoint is only meaningful once it is, so skip it while detached.
+        // The vendor `FormField::getForm()` docblock claims a non-nullable
+        // `Form`, but `$this->form` is genuinely nullable until attached; the
+        // override below keeps this a real check instead of an always-true one.
         /** @var Form|null $form */
         $form = $this->getForm();
         if ($form !== null) {
@@ -74,12 +77,8 @@ class IconDropdownField extends DropdownField
     {
         $iconPreview = null;
 
-        if ($this->value) {
-            /**
-             * @deprecated FormField::Value() has been deprecated. It will be replaced by getFormattedValue() and getValue().
-             * See: https://docs.silverstripe.org/en/5/changelogs/5.4.0/#deprecated-api
-             */
-            $icon = Icon::get()->byID($this->value);
+        if ($this->getValue()) {
+            $icon = Icon::get()->byID($this->getValue());
             if ($icon !== null && $icon->Icon()->exists()) {
                 $iconPreview = $icon->Icon()->getString();
             }

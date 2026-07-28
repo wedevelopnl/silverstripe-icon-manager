@@ -6,6 +6,7 @@ namespace WeDevelop\IconManager\Tests\Integration\Forms;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Dev\SapphireTest;
+use SilverStripe\Dev\TestOnly;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use WeDevelop\IconManager\Forms\IconDropdownField;
@@ -17,7 +18,7 @@ class IconDropdownFieldTest extends SapphireTest
     public function testExposesThePreviewEndpointWhenAttachedToAForm(): void
     {
         $field = IconDropdownField::create('IconID');
-        Form::create(Controller::curr(), 'TestForm', FieldList::create($field), FieldList::create());
+        Form::create(new IconDropdownFieldTestController(), 'TestForm', FieldList::create($field), FieldList::create());
 
         $attributes = $field->getAttributes();
 
@@ -32,4 +33,12 @@ class IconDropdownFieldTest extends SapphireTest
             IconDropdownField::create('IconID')->getAttributes(),
         );
     }
+}
+
+// Form::FormAction() calls the controller's Link(), which triggers a PHP
+// warning for any Controller without a configured url_segment (Controller::curr()
+// has none in a test run). A minimal controller with one avoids the warning.
+class IconDropdownFieldTestController extends Controller implements TestOnly
+{
+    private static string $url_segment = 'icon-dropdown-field-test';
 }
