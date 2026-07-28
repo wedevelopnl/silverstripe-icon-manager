@@ -1,0 +1,14 @@
+{
+  $schema: 'vendor/infection/infection/resources/schema.json',
+  source: {
+    directories: ['vendor/wedevelopnl/silverstripe-icon-manager/src'],
+  },
+  logs: {
+    text: 'coverage/infection.log',
+  },
+  mutators: {
+    '@default': true,
+  },
+  minMsi: 70,
+  minCoveredMsi: 80,
+}

@@ -1,0 +1,258 @@
+version: '3'
+
+# Build/dev task runner for the SilverStripe Icon Manager module.
+# Install Task: https://taskfile.dev/installation
+#
+# Every `docker compose exec` here passes -T except `sh`, which genuinely wants
+# a TTY. Agent and CI shells have no TTY, and without -T docker fails outright
+# with "the input device is not a TTY". Losing TTY allocation costs nothing for
+# non-interactive commands, so this works for humans and agents alike.
+
+vars:
+  COMPOSE: docker compose -f .docker/compose.yml
+
+tasks:
+  # --- Docker environment ---------------------------------------------------
+
+  docker-env:
+    desc: Generate .docker/.env with deterministic ports (only if missing)
+    cmds:
+      - .docker/env.sh
+    status:
+      - test -f .docker/.env
+
+  up:
+    desc: Start services (build if needed)
+    deps: [docker-env]
+    cmds:
+      - "{{.COMPOSE}} up -d --build"
+      - 'port=$(grep WEB_PORT .docker/.env | cut -d= -f2); printf "\n  Testbed running at https://localhost:%s\n\n" "$port"'
+
+  down:
+    desc: Stop services
+    cmds:
+      - "{{.COMPOSE}} down"
+
+  destroy:
+    desc: Stop services and remove volumes
+    cmds:
+      - "{{.COMPOSE}} down -v"
+
+  build:
+    desc: Build images without starting
+    cmds:
+      - "{{.COMPOSE}} build"
+
+  ensure-up:
+    desc: Ensure services are running and ready
+    deps: [docker-env]
+    cmds:
+      - "{{.COMPOSE}} exec -T app true 2>/dev/null || {{.COMPOSE}} up -d --build --wait"
+
+  sh:
+    desc: Open a shell in the app container
+    deps: [ensure-up]
+    interactive: true
+    cmds:
+      # No -T: this one genuinely wants a TTY.
+      - "{{.COMPOSE}} exec app sh"
+
+  # --- Tests ----------------------------------------------------------------
+
+  test:
+    desc: Run all tests (PHP unit + integration + functional + JS)
+    deps: [ensure-up]
+    cmds:
+      - task: test-unit
+      - task: test-integration
+      - task: test-functional
+      - task: test-js
+
+  test-unit:
+    desc: Run PHP unit tests (no database or framework)
+    deps: [ensure-up]
+    cmds:
+      - "{{.COMPOSE}} exec -T app vendor/bin/phpunit --testsuite unit"
+
+  test-integration:
+    desc: Run PHP integration tests (full SilverStripe environment)
+    deps: [ensure-up]
+    cmds:
+      - "{{.COMPOSE}} exec -T app vendor/bin/phpunit --testsuite integration"
+
+  test-functional:
+    desc: Run PHP functional tests (HTTP/controller tests)
+    deps: [ensure-up]
+    cmds:
+      - "{{.COMPOSE}} exec -T app vendor/bin/phpunit --testsuite functional"
+
+  test-js:
+    desc: Run JavaScript tests (Vitest)
+    cmds:
+      - npm run test
+
+  test-e2e:
+    desc: Run E2E tests (Playwright, requires running Docker services)
+    deps: [ensure-up]
+    cmds:
+      - npx playwright test
+
+  test-e2e-ui:
+    desc: Run E2E tests with interactive UI
+    deps: [ensure-up]
+    interactive: true
+    cmds:
+      - npx playwright test --ui
+
+  # --- Coverage -------------------------------------------------------------
+
+  coverage:
+    desc: Run all PHP tests with coverage (HTML + Clover XML)
+    deps: [ensure-up]
+    cmds:
+      - >-
+        {{.COMPOSE}} exec app vendor/bin/phpunit
+        --coverage-html coverage/html
+        --coverage-clover coverage/clover.xml
+
+  coverage-check:
+    desc: Check PHP coverage meets minimum threshold (90%)
+    deps: [coverage]
+    cmds:
+      - "{{.COMPOSE}} exec -T app vendor/bin/coverage-check coverage/clover.xml 90"
+
+  coverage-js:
+    desc: Run JavaScript tests with coverage
+    cmds:
+      - npm run coverage
+
+  # --- Mutation testing -----------------------------------------------------
+
+  mutate:
+    desc: Run PHP mutation testing (Infection)
+    deps: [ensure-up]
+    cmds:
+      - "{{.COMPOSE}} exec -T app php -d memory_limit=1G vendor/bin/infection --threads=4"
+
+  # --- Static analysis ------------------------------------------------------
+
+  analyse:
+    desc: Run PHPStan static analysis
+    deps: [ensure-up]
+    cmds:
+      - "{{.COMPOSE}} exec -T app vendor/bin/phpstan analyse -c phpstan.neon.dist --memory-limit=512M"
+
+  rector:
+    desc: Run Rector refactoring (applies changes)
+    deps: [ensure-up]
+    cmds:
+      - "{{.COMPOSE}} exec -T app vendor/bin/rector process"
+
+  rector-dry:
+    desc: Run Rector in dry-run mode (preview only)
+    deps: [ensure-up]
+    cmds:
+      - "{{.COMPOSE}} exec -T app vendor/bin/rector process --dry-run"
+
+  # --- SilverStripe helpers -------------------------------------------------
+
+  flush:
+    desc: Clear SilverStripe cache
+    deps: [ensure-up]
+    cmds:
+      - "{{.COMPOSE}} exec -T app vendor/bin/sake flush"
+
+  dev-build:
+    desc: Run dev/build to rebuild the database and manifest
+    deps: [ensure-up]
+    cmds:
+      - "{{.COMPOSE}} exec -T app vendor/bin/sake dev/build flush=1"
+
+  # --- QA -------------------------------------------------------------------
+
+  qa:
+    desc: Run full QA suite (all checks in parallel)
+    deps: [ensure-up]
+    cmds:
+      - task: qa-checks
+
+  qa-js:
+    desc: Run JavaScript QA (lint + format + typecheck + test + build, in parallel)
+    deps:
+      - qa-lint
+      - qa-format
+      - qa-typecheck
+      - qa-test-js
+      - qa-build
+
+  qa-checks:
+    internal: true
+    deps:
+      - qa-analyse
+      - qa-rector
+      - qa-coverage
+      - qa-lint
+      - qa-format
+      - qa-typecheck
+      - qa-test-js
+      - qa-build
+
+  qa-analyse:
+    internal: true
+    cmds:
+      - 'echo "==> [analyse] running PHPStan..."'
+      - "{{.COMPOSE}} exec -T app vendor/bin/phpstan analyse -c phpstan.neon.dist --memory-limit=512M"
+      - 'echo "==> [analyse] done"'
+
+  qa-rector:
+    internal: true
+    cmds:
+      - 'echo "==> [rector] running Rector (dry-run)..."'
+      - "{{.COMPOSE}} exec -T app vendor/bin/rector process --dry-run --no-progress-bar"
+      - 'echo "==> [rector] done"'
+
+  qa-coverage:
+    internal: true
+    cmds:
+      - 'echo "==> [coverage] running PHPUnit with coverage..."'
+      - >-
+        {{.COMPOSE}} exec -T app vendor/bin/phpunit
+        --coverage-html coverage/html
+        --coverage-clover coverage/clover.xml
+      - "{{.COMPOSE}} exec -T app vendor/bin/coverage-check coverage/clover.xml 90"
+      - 'echo "==> [coverage] done"'
+
+  qa-lint:
+    internal: true
+    cmds:
+      - 'echo "==> [lint] running Biome..."'
+      - npm run lint
+      - 'echo "==> [lint] done"'
+
+  qa-format:
+    internal: true
+    cmds:
+      - 'echo "==> [format] running Biome format check..."'
+      - npm run format:check
+      - 'echo "==> [format] done"'
+
+  qa-typecheck:
+    internal: true
+    cmds:
+      - 'echo "==> [typecheck] running tsc..."'
+      - npm run typecheck
+      - 'echo "==> [typecheck] done"'
+
+  qa-test-js:
+    internal: true
+    cmds:
+      - 'echo "==> [test-js] running Vitest..."'
+      - npm run test
+      - 'echo "==> [test-js] done"'
+
+  qa-build:
+    internal: true
+    cmds:
+      - 'echo "==> [build] running vite build..."'
+      - npx vite build
+      - 'echo "==> [build] done"'

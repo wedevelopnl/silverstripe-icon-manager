@@ -15,8 +15,6 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
  * @property int $IconID
  * @property File $Icon
  * @method File Icon()
- *
- * @phpstan-import-type OldIconShape from \WeDevelop\IconManager\Tasks\MigrateToNewIconModelTask
  */
 class Icon extends DataObject
 {
@@ -83,36 +81,8 @@ class Icon extends DataObject
         return $fields;
     }
 
-    /**
-     * @deprecated 2.0.1 Call the `getTag` method straight on the Icon object
-     */
-    public function forTemplate(): ?string
-    {
-        return $this->Icon->getTag();
-    }
-
     public function getPreview(): DBField
     {
         return DBField::create_field(DBHTMLText::class, $this->Icon->getTag());
-    }
-
-    /**
-     * Exists to support migration from the old model.
-     *
-     * @todo remove this when the migration task gets removed.
-     * @internal
-     *
-     * @param OldIconShape $data
-     */
-    public static function createFromOldDataset(array $data): self
-    {
-        return self::create([
-            'ID' => $data['ID'],
-            'ClassName' => self::class,
-            'LastEdited' => $data['LastEdited'],
-            'Created' => $data['Created'],
-            'Title' => $data['Title'],
-            'IconID' => $data['IconID'],
-        ]);
     }
 }

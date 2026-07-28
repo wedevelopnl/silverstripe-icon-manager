@@ -1,6 +1,36 @@
+.DS_Store
 .idea
+.vscode
+composer.lock
+node_modules/
+public/
+vendor/
 
-/.superpowers
-/vendor
-/composer.lock
-/.php-cs-fixer.cache
+# PHPUnit
+phpunit.xml
+.phpunit.cache/
+coverage/
+
+# Infection
+infection/
+
+# Playwright
+tests/E2E/.auth/
+test-results/
+playwright-report/
+blob-report/
+reports/
+
+# Source maps (never commit — they can leak original source on a misconfigured build)
+*.map
+
+# APM
+apm_modules/
+
+# Docker generated env (worktree-specific ports)
+.docker/.env
+
+# Claude Code local config
+.claude/*.local.md
+.claude/*.local.json
+.superpowers/
