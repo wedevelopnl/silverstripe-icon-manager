@@ -99,6 +99,18 @@ class IconDropdownFieldTest extends SapphireTest
 
         $this->assertSame($icon->Icon()->getTag(), $field->getIconPreview());
     }
+
+    public function testPreviewHolderIdIsScopedToTheField(): void
+    {
+        $field = $this->attachedField();
+
+        $holder = (string) $field->FieldHolder();
+
+        // Derived from the field's own ID at runtime, not hardcoded: a
+        // regression that made the template emit a static id would still
+        // contain *some* "_preview" id, but not one matching this field's ID.
+        $this->assertStringContainsString('id="' . $field->ID() . '_preview"', $holder);
+    }
 }
 
 // Form::FormAction() calls the controller's Link(), which triggers a PHP warning
