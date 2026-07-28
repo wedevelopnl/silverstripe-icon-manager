@@ -9,24 +9,20 @@ const LOADING_MESSAGE = 'Loading preview…'
 const EMPTY_MESSAGE = 'No icon selected'
 const ERROR_MESSAGE = 'Could not load the icon preview'
 
-// Cached per select, then keyed by `${endpoint}?icon=${id}` within that field's
-// own map. Scoping by field (rather than one flat, module-wide map keyed on the
-// URL alone) means two fields can never bleed cached responses into each other
-// even if their endpoints were ever to collide.
-const cache = new WeakMap<HTMLSelectElement, Map<string, string>>()
+// Keyed by `${endpoint}?icon=${id}` so two fields pointing at different
+// endpoints never share a cached response. Deliberately module-scoped (not
+// tied to the <select> element): the CMS keeps this module loaded for the
+// whole Pjax session while tearing down and recreating the DOM on every
+// navigation, so a cache keyed on DOM-node identity would lose every hit as
+// soon as a field's form re-rendered — exactly the case this cache exists for.
+const cache = new Map<string, string>()
 
 function holderFor(select: HTMLSelectElement): HTMLElement | null {
   return document.getElementById(`${select.id}_preview`)
 }
 
-async function fetchPreview(select: HTMLSelectElement, url: string): Promise<string> {
-  let selectCache = cache.get(select)
-  if (selectCache === undefined) {
-    selectCache = new Map<string, string>()
-    cache.set(select, selectCache)
-  }
-
-  const cached = selectCache.get(url)
+async function fetchPreview(url: string): Promise<string> {
+  const cached = cache.get(url)
   if (cached !== undefined) {
     return cached
   }
@@ -37,7 +33,7 @@ async function fetchPreview(select: HTMLSelectElement, url: string): Promise<str
   }
 
   const markup = await response.text()
-  selectCache.set(url, markup)
+  cache.set(url, markup)
 
   return markup
 }
@@ -61,10 +57,7 @@ async function updatePreview(select: HTMLSelectElement): Promise<void> {
   holder.innerHTML = LOADING_MESSAGE
 
   try {
-    holder.innerHTML = await fetchPreview(
-      select,
-      `${endpoint}?icon=${encodeURIComponent(select.value)}`,
-    )
+    holder.innerHTML = await fetchPreview(`${endpoint}?icon=${encodeURIComponent(select.value)}`)
   } catch {
     holder.innerHTML = ERROR_MESSAGE
   }

@@ -1,7 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { initIconDropdowns, observeIconDropdowns } from './iconDropdownField'
 
 const ENDPOINT = '/admin/icons/field/IconID/preview'
+
+// The module keeps its fetch cache for its own lifetime by design (see the
+// comment on `cache` in iconDropdownField.ts) — that's what lets a field
+// survive a Pjax re-render without refetching. Re-importing the module fresh
+// per test, rather than importing it once at the top of this file, gives each
+// test its own cache instead of leaking entries between test cases that reuse
+// the same endpoint and icon ids.
+let initIconDropdowns: typeof import('./iconDropdownField').initIconDropdowns
+let observeIconDropdowns: typeof import('./iconDropdownField').observeIconDropdowns
 
 function renderField(id: string): HTMLSelectElement {
   const holder = document.createElement('div')
@@ -41,8 +49,10 @@ async function change(select: HTMLSelectElement, value: string): Promise<void> {
 }
 
 describe('iconDropdownField', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     document.body.innerHTML = ''
+    vi.resetModules()
+    ;({ initIconDropdowns, observeIconDropdowns } = await import('./iconDropdownField'))
   })
 
   it('renders the fetched preview into its own holder', async () => {
