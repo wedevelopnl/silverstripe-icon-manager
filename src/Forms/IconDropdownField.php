@@ -4,22 +4,29 @@ declare(strict_types=1);
 
 namespace WeDevelop\IconManager\Forms;
 
+use Override;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\Forms\Form;
 use SilverStripe\View\Requirements;
 use WeDevelop\IconManager\Models\Icon;
 
 class IconDropdownField extends DropdownField
 {
+    /**
+     * @var array<string>
+     * @config
+     */
     private static array $allowed_actions = [
         'preview',
     ];
 
-    public function __construct($name, $title = 'Icon')
+    public function __construct(string $name, string $title = 'Icon')
     {
-        parent::__construct($name, $title, Icon::get()->Sort('Title')->map());
+        parent::__construct($name, $title, Icon::get()->sort(['Title' => 'ASC'])->map()->toArray());
 
         $this->setHasEmptyDefault(true);
+
+        Requirements::javascript('wedevelopnl/silverstripe-icon-manager:client/dist/icondropdownfield.js');
     }
 
     public function preview(): string
@@ -30,7 +37,7 @@ class IconDropdownField extends DropdownField
             return 'No icon selected';
         }
 
-        $icon = Icon::get_by_id($iconID);
+        $icon = Icon::get()->byID($iconID);
 
         if (!$icon) {
             return 'Icon not created, please create it using the icon manager';
@@ -45,13 +52,22 @@ class IconDropdownField extends DropdownField
         return $iconFile->getString();
     }
 
-    public function Field($properties = []): DBHTMLText
+    /** @return array<string, mixed> */
+    #[Override]
+    public function getAttributes(): array
     {
-        Requirements::javascript('wedevelopnl/silverstripe-icon-manager:client/dist/icondropdownfield.js');
+        /** @var array<string, mixed> $attributes */
+        $attributes = parent::getAttributes();
 
-        $this->setAttribute('data-icon-preview-endpoint', $this->Link('preview'));
+        // Link() throws when the field is not attached to a form. The preview
+        // endpoint is only meaningful once it is, so skip it while detached.
+        /** @var Form|null $form */
+        $form = $this->getForm();
+        if ($form !== null) {
+            $attributes['data-icon-preview-endpoint'] = $this->Link('preview');
+        }
 
-        return parent::Field($properties);
+        return $attributes;
     }
 
     public function getIconPreview(): ?string
@@ -59,8 +75,12 @@ class IconDropdownField extends DropdownField
         $iconPreview = null;
 
         if ($this->value) {
-            $icon = Icon::get_by_id($this->value);
-            if ($icon->Icon()->exists()) {
+            /**
+             * @deprecated FormField::Value() has been deprecated. It will be replaced by getFormattedValue() and getValue().
+             * See: https://docs.silverstripe.org/en/5/changelogs/5.4.0/#deprecated-api
+             */
+            $icon = Icon::get()->byID($this->value);
+            if ($icon !== null && $icon->Icon()->exists()) {
                 $iconPreview = $icon->Icon()->getString();
             }
         }
