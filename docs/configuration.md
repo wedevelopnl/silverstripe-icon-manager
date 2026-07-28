@@ -17,6 +17,10 @@ SilverStripe\Assets\File:
 ```
 In this example we allow PNGs to be used as icon.
 
+Icons are rendered with SilverStripe's `getTag()`, so each file type renders as
+its natural HTML element — SVGs inline as `<svg>`, raster images as `<img>`. Any
+file type SilverStripe can render is safe to add here.
+
 ## Using icons with a DataModel/Page
 To use a Icon , you can just set a `$has_one` or `$has_many` relation to the Icon class;
 
@@ -63,5 +67,5 @@ class Page extends SiteTree
 
 You can simply render a icon by using the `$Icon` (or the name of your relation) property in the `.ss` template.
 
-`$Icon` will get rendered as the icon. When using SVG icons then you need to wrap this icon inside a `<span><span>`
-with your own classes/styling to apply sizes/colors/etc. 
+`$Icon` renders the icon via its file's `getTag()`. For SVG icons, wrap the
+output in a `<span>` with your own classes to control size and colour.
