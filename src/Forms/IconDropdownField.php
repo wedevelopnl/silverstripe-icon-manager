@@ -25,6 +25,9 @@ class IconDropdownField extends DropdownField
         parent::__construct($name, $title, Icon::get()->sort(['Title' => 'ASC'])->map()->toArray());
 
         $this->setHasEmptyDefault(true);
+        // The client script binds to this class. Applying it here rather than
+        // leaving it to the caller is what makes the live preview work at all.
+        $this->addExtraClass('icondropdown');
 
         Requirements::javascript('wedevelopnl/silverstripe-icon-manager:client/dist/icondropdownfield.js');
     }
@@ -34,22 +37,24 @@ class IconDropdownField extends DropdownField
         $iconID = $this->getRequest()->getVar('icon');
 
         if (!$iconID) {
-            return 'No icon selected';
+            return _t(self::class . '.NO_ICON_SELECTED', 'No icon selected');
         }
 
         $icon = Icon::get()->byID($iconID);
 
         if (!$icon) {
-            return 'Icon not created, please create it using the icon manager';
+            return _t(self::class . '.ICON_NOT_FOUND', 'Icon not created, please create it using the icon manager');
         }
 
         $iconFile = $icon->Icon();
 
         if (!$iconFile->exists()) {
-            return 'No icon preview file found, please attach a file to the icon';
+            return _t(self::class . '.NO_PREVIEW_FILE', 'No icon preview file found, please attach a file to the icon');
         }
 
-        return $iconFile->getString();
+        // getTag(), not getString(): getString() returns raw file bytes, which
+        // renders binary data into the DOM for any non-SVG icon file type.
+        return $iconFile->getTag();
     }
 
     /** @return array<string, mixed> */
@@ -80,7 +85,7 @@ class IconDropdownField extends DropdownField
         if ($this->getValue()) {
             $icon = Icon::get()->byID($this->getValue());
             if ($icon !== null && $icon->Icon()->exists()) {
-                $iconPreview = $icon->Icon()->getString();
+                $iconPreview = $icon->Icon()->getTag();
             }
         }
 
