@@ -111,7 +111,7 @@ tasks:
     deps: [ensure-up]
     cmds:
       - >-
-        {{.COMPOSE}} exec app vendor/bin/phpunit
+        {{.COMPOSE}} exec -T app vendor/bin/phpunit
         --coverage-html coverage/html
         --coverage-clover coverage/clover.xml
 
