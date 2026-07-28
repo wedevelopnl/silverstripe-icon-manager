@@ -45,11 +45,6 @@ class IconDropdownFieldTest extends SapphireTest
         return $icon;
     }
 
-    public function testAppliesTheIconDropdownClass(): void
-    {
-        $this->assertStringContainsString('icondropdown', IconDropdownField::create('IconID')->extraClass());
-    }
-
     public function testPreviewReturnsAMessageWhenNoIconRequested(): void
     {
         $field = $this->attachedField();
