@@ -1,0 +1,10 @@
+---
+Name: iconmanager-dev
+Only:
+  environment: dev
+---
+
+# The demo admin ships hidden (ignore_menuitem: true on the class) so consumers
+# never see it; dev environments get it back for manual testing and E2E.
+WeDevelop\IconManager\Dev\IconDemoAdmin:
+  ignore_menuitem: false

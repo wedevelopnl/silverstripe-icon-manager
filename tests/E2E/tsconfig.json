@@ -7,14 +7,13 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "erasableSyntaxOnly": true,
     "noEmit": true,
-    "types": ["vitest/globals"],
+    "types": ["node"],
     "paths": {
-      "@/*": ["./client/src/js/*"]
+      "@wedevelop/e2e": ["../../vendor/wedevelopnl/silverstripe-e2e/client/playwright/index.ts"]
     }
   },
-  "include": ["client/src/js/**/*", "vite.config.ts", "vitest.setup.ts", "playwright.config.ts"]
+  "include": [
+    "**/*.ts"
+  ]
 }

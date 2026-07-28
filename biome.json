@@ -6,7 +6,13 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["client/src/js/**/*.ts", "vite.config.ts", "vitest.setup.ts"]
+    "includes": [
+      "client/src/js/**/*.ts",
+      "vite.config.ts",
+      "vitest.setup.ts",
+      "tests/E2E/**/*.ts",
+      "playwright.config.ts"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -72,11 +78,28 @@
       }
     },
     {
-      "includes": ["vite.config.ts", "vitest.setup.ts"],
+      "includes": ["vite.config.ts", "vitest.setup.ts", "playwright.config.ts"],
       "linter": {
         "rules": {
           "style": {
             "noProcessEnv": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["tests/E2E/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNonNullAssertion": "off"
+          },
+          "performance": {
+            "noAwaitInLoops": "off"
+          },
+          "suspicious": {
+            "noMisplacedAssertion": "off",
+            "noSkippedTests": "off"
           }
         }
       }
