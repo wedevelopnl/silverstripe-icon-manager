@@ -11,4 +11,6 @@ applyTo: '**/*.php'
   PHP forbids narrowing an inherited parameter type. Return types may be added.
   This is why `IconDropdownField` overrides `getAttributes()` (no params) rather
   than `Field($properties = [])`.
-- Config statics carry `/** @config */` and a `@var` tag for arrays.
+- Config statics carry a `@var` tag for arrays. No `/** @config */` — silverstan
+  treats every non-`@internal` `private static` as a config property, so the tag
+  is inert. Mark a non-config `private static` with `@internal` to opt it out.

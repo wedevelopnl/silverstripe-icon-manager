@@ -18,15 +18,12 @@ use SilverStripe\Admin\ModelAdmin;
  */
 class IconDemoAdmin extends ModelAdmin
 {
-    /** @config */
     private static string $menu_title = 'Icon demo';
 
-    /** @config */
     private static bool $ignore_menuitem = true;
 
     /**
      * @var array<string>
-     * @config
      */
     private static array $managed_models = [
         IconDemoObject::class,

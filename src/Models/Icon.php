@@ -22,18 +22,14 @@ class Icon extends DataObject
     // Matches the name SilverStripe already derives implicitly from the FQCN
     // (WeDevelop\IconManager\Models\Icon). Making it explicit satisfies
     // silverstan without renaming the table underneath existing installs.
-    /** @config */
     private static string $table_name = 'WeDevelop_IconManager_Models_Icon';
 
-    /** @config */
     private static string $singular_name = 'Icon';
 
-    /** @config */
     private static string $plural_name = 'Icons';
 
     /**
      * @var array<string, string>
-     * @config
      */
     private static array $db = [
         'Title' => 'Varchar(255)',
@@ -41,7 +37,6 @@ class Icon extends DataObject
 
     /**
      * @var array<string, string>
-     * @config
      */
     private static array $has_one = [
         'Icon' => File::class,
@@ -49,7 +44,6 @@ class Icon extends DataObject
 
     /**
      * @var array<string>
-     * @config
      */
     private static array $owns = [
         'Icon',
@@ -57,7 +51,6 @@ class Icon extends DataObject
 
     /**
      * @var array<string, string>
-     * @config
      */
     private static array $summary_fields = [
         'Title' => 'Title',

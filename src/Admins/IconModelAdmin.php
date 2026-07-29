@@ -12,18 +12,14 @@ use WeDevelop\IconManager\Models\Icon;
 
 class IconModelAdmin extends ModelAdmin
 {
-    /** @config */
     private static string $url_segment = 'icons';
 
-    /** @config */
     private static string $menu_title = 'Icons';
 
-    /** @config */
     private static string $menu_icon_class = 'font-icon-pencil';
 
     /**
      * @var array<string>
-     * @config
      */
     private static array $managed_models = [
         Icon::class,
