@@ -14,7 +14,6 @@ class IconDropdownField extends DropdownField
 {
     /**
      * @var array<string>
-     * @config
      */
     private static array $allowed_actions = [
         'preview',

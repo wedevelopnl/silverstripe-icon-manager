@@ -19,18 +19,14 @@ use WeDevelop\IconManager\Models\Icon;
  */
 class IconDemoObject extends DataObject
 {
-    /** @config */
     private static string $table_name = 'WeDevelop_IconManager_IconDemoObject';
 
-    /** @config */
     private static string $singular_name = 'Icon demo';
 
-    /** @config */
     private static string $plural_name = 'Icon demos';
 
     /**
      * @var array<string, string>
-     * @config
      */
     private static array $db = [
         'Title' => 'Varchar(255)',
@@ -38,7 +34,6 @@ class IconDemoObject extends DataObject
 
     /**
      * @var array<string, string>
-     * @config
      */
     private static array $has_one = [
         'Icon' => Icon::class,
@@ -46,7 +41,6 @@ class IconDemoObject extends DataObject
 
     /**
      * @var array<string, string>
-     * @config
      */
     private static array $summary_fields = [
         'Title' => 'Title',
