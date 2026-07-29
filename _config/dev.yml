@@ -4,7 +4,9 @@ Only:
   environment: dev
 ---
 
-# The demo admin ships hidden (ignore_menuitem: true on the class) so consumers
-# never see it; dev environments get it back for manual testing and E2E.
+# The demo admin ships with no url_segment (see IconDemoAdmin), so it has no
+# CMS route outside dev. This block gives it a route and un-hides its CMS
+# menu item for manual testing and E2E.
 WeDevelop\IconManager\Dev\IconDemoAdmin:
+  url_segment: 'icon-demo'
   ignore_menuitem: false

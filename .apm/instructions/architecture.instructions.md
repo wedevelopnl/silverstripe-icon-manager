@@ -10,7 +10,9 @@ templates/             .ss templates (IconDropdownField holder)
 src/Models/            Icon DataObject
 src/Forms/             IconDropdownField
 src/Admins/            IconModelAdmin
-src/Dev/               Dev-only demo object + admin (excluded from the package)
+src/Dev/               Dev-only demo object + admin (excluded from the dist
+                       archive; declares no url_segment, so no CMS route
+                       outside dev)
 lang/                  i18n strings
 client/src/js/         TypeScript source
 client/src/styles/     SCSS source

@@ -93,6 +93,8 @@ class Icon extends DataObject
 
     public function getPreview(): DBField
     {
-        return DBField::create_field(DBHTMLText::class, $this->Icon->getTag());
+        $tag = $this->Icon()->exists() ? $this->Icon()->getTag() : '';
+
+        return DBField::create_field(DBHTMLText::class, $tag);
     }
 }

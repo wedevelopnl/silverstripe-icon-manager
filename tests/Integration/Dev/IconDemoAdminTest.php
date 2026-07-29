@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WeDevelop\IconManager\Tests\Integration\Dev;
 
+use ReflectionClass;
 use ReflectionProperty;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
@@ -30,6 +31,19 @@ class IconDemoAdminTest extends SapphireTest
         $this->assertTrue(
             $property->getDefaultValue(),
             'The dev admin must stay out of the CMS menu unless dev config enables it.',
+        );
+    }
+
+    public function testHasNoUrlSegmentByDefault(): void
+    {
+        // The real route gate: AdminRootController::add_rule_for_controller()
+        // skips any controller whose `url_segment` config is empty, regardless
+        // of `ignore_menuitem`. Reflection, for the same reason as above — the
+        // test kernel keeps _config/dev.yml's override active, so Config::inst()
+        // would always read back 'icon-demo'.
+        $this->assertFalse(
+            (new ReflectionClass(IconDemoAdmin::class))->hasProperty('url_segment'),
+            'The dev admin must have no CMS route unless dev config sets url_segment.',
         );
     }
 

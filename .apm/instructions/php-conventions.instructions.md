@@ -12,7 +12,3 @@ applyTo: '**/*.php'
   This is why `IconDropdownField` overrides `getAttributes()` (no params) rather
   than `Field($properties = [])`.
 - Config statics carry `/** @config */` and a `@var` tag for arrays.
-- `BuildTask` in SS6: `protected static string $commandName` (not `$segment`),
-  `protected string $title`, `protected static string $description`, and
-  `protected function execute(InputInterface $input, PolyOutput $output): int`.
-  Invoked as `sake tasks:<commandName>`. Never claim the `-f` short flag.

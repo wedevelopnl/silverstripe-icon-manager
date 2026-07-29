@@ -12,8 +12,10 @@ use WeDevelop\IconManager\Models\Icon;
 
 /**
  * Dev-only host for an {@see IconDropdownField}, used by the E2E suite and for
- * manual testing in the Docker testbed. Excluded from the distributed package
- * via .gitattributes and hidden from the CMS unless the environment is dev.
+ * manual testing in the Docker testbed. Excluded from the distributed archive
+ * via .gitattributes export-ignore (not from --prefer-source or VCS installs).
+ * Reachable only through {@see IconDemoAdmin}, which registers no CMS route
+ * outside dev.
  */
 class IconDemoObject extends DataObject
 {

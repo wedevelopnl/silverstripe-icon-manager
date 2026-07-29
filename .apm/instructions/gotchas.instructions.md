@@ -33,7 +33,15 @@ applyTo: '**/*'
   to `dev` for every PHPUnit run, so the override is unconditionally active inside
   the test suite and no `Config`-based assertion can ever observe the non-dev
   behaviour. `tests/Integration/Dev/IconDemoAdminTest.php` therefore asserts
-  `IconDemoAdmin`'s declared `ignore_menuitem` default via `ReflectionProperty`
-  instead of `Config::inst()`. Do not assume the YAML gate itself is tested.
+  `IconDemoAdmin`'s declared `ignore_menuitem` default and its absent
+  `url_segment` via reflection instead of `Config::inst()`. Do not assume the
+  YAML gate itself is tested.
+- **`ignore_menuitem` only hides the CMS menu entry, not the route.**
+  `AdminRootController::rules()` builds routes from every `url_segment` it finds
+  via `CMSMenu::get_cms_classes()`, which does not filter on `ignore_menuitem`.
+  `IconDemoAdmin` declares no `url_segment` of its own for this reason —
+  `add_rule_for_controller()` skips any controller whose `url_segment` config is
+  empty — so `_config/dev.yml` is what keeps `/admin/icon-demo` out of prod, not
+  `ignore_menuitem`.
 - **CLAUDE.md / AGENTS.md / GEMINI.md are generated** from `.apm/instructions/` on
   every `apm compile`. Edit the sources, never the generated files.
