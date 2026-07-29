@@ -4,22 +4,29 @@ declare(strict_types=1);
 
 namespace WeDevelop\IconManager\Forms;
 
+use Override;
 use SilverStripe\Forms\DropdownField;
-use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\Forms\Form;
 use SilverStripe\View\Requirements;
 use WeDevelop\IconManager\Models\Icon;
 
 class IconDropdownField extends DropdownField
 {
+    /**
+     * @var array<string>
+     * @config
+     */
     private static array $allowed_actions = [
         'preview',
     ];
 
-    public function __construct($name, $title = 'Icon')
+    public function __construct(string $name, string $title = 'Icon')
     {
-        parent::__construct($name, $title, Icon::get()->Sort('Title')->map());
+        parent::__construct($name, $title, Icon::get()->sort(['Title' => 'ASC'])->map()->toArray());
 
         $this->setHasEmptyDefault(true);
+
+        Requirements::javascript('wedevelopnl/silverstripe-icon-manager:client/dist/js/bundle.js');
     }
 
     public function preview(): string
@@ -27,41 +34,62 @@ class IconDropdownField extends DropdownField
         $iconID = $this->getRequest()->getVar('icon');
 
         if (!$iconID) {
-            return 'No icon selected';
+            return _t(self::class . '.NO_ICON_SELECTED', 'No icon selected');
         }
 
-        $icon = Icon::get_by_id($iconID);
+        $icon = Icon::get()->byID($iconID);
 
         if (!$icon) {
-            return 'Icon not created, please create it using the icon manager';
+            return _t(self::class . '.ICON_NOT_FOUND', 'Icon not created, please create it using the icon manager');
         }
 
         $iconFile = $icon->Icon();
 
         if (!$iconFile->exists()) {
-            return 'No icon preview file found, please attach a file to the icon';
+            return _t(self::class . '.NO_PREVIEW_FILE', 'No icon preview file found, please attach a file to the icon');
         }
 
-        return $iconFile->getString();
+        // getTag(), not getString(): getString() returns raw file bytes, which
+        // renders binary data into the DOM for any non-SVG icon file type.
+        return $iconFile->getTag();
     }
 
-    public function Field($properties = []): DBHTMLText
+    /** @return array<string, mixed> */
+    #[Override]
+    public function getAttributes(): array
     {
-        Requirements::javascript('wedevelopnl/silverstripe-icon-manager:client/dist/icondropdownfield.js');
+        /** @var array<string, mixed> $attributes */
+        $attributes = parent::getAttributes();
 
-        $this->setAttribute('data-icon-preview-endpoint', $this->Link('preview'));
+        // Link() throws when the field is not attached to a form. The preview
+        // endpoint is only meaningful once it is, so skip it while detached.
+        // The vendor `FormField::getForm()` docblock claims a non-nullable
+        // `Form`, but `$this->form` is genuinely nullable until attached; the
+        // override below keeps this a real check instead of an always-true one.
+        /** @var Form|null $form */
+        $form = $this->getForm();
+        if ($form !== null) {
+            $attributes['data-icon-preview-endpoint'] = $this->Link('preview');
 
-        return parent::Field($properties);
+            // The script replaces the holder contents the template rendered, so
+            // it needs the same translated strings — otherwise the first change
+            // event flips a translated CMS back to English.
+            $attributes['data-icon-preview-empty'] = _t(self::class . '.NO_ICON_SELECTED', 'No icon selected');
+            $attributes['data-icon-preview-loading'] = _t(self::class . '.LOADING_PREVIEW', 'Loading preview…');
+            $attributes['data-icon-preview-error'] = _t(self::class . '.PREVIEW_FAILED', 'Could not load the icon preview');
+        }
+
+        return $attributes;
     }
 
     public function getIconPreview(): ?string
     {
         $iconPreview = null;
 
-        if ($this->value) {
-            $icon = Icon::get_by_id($this->value);
-            if ($icon->Icon()->exists()) {
-                $iconPreview = $icon->Icon()->getString();
+        if ($this->getValue()) {
+            $icon = Icon::get()->byID($this->getValue());
+            if ($icon !== null && $icon->Icon()->exists()) {
+                $iconPreview = $icon->Icon()->getTag();
             }
         }
 

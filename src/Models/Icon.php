@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace WeDevelop\IconManager\Models;
 
+use Override;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
 use SilverStripe\Forms\FieldList;
@@ -15,11 +16,15 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
  * @property int $IconID
  * @property File $Icon
  * @method File Icon()
- *
- * @phpstan-import-type OldIconShape from \WeDevelop\IconManager\Tasks\MigrateToNewIconModelTask
  */
 class Icon extends DataObject
 {
+    // Matches the name SilverStripe already derives implicitly from the FQCN
+    // (WeDevelop\IconManager\Models\Icon). Making it explicit satisfies
+    // silverstan without renaming the table underneath existing installs.
+    /** @config */
+    private static string $table_name = 'WeDevelop_IconManager_Models_Icon';
+
     /** @config */
     private static string $singular_name = 'Icon';
 
@@ -59,11 +64,12 @@ class Icon extends DataObject
         'getPreview' => 'Preview',
     ];
 
+    #[Override]
     public function getCMSFields(): FieldList
     {
         $fields = parent::getCMSFields();
 
-        /** @var UploadField $imageField */
+        /** @var UploadField|null $imageField */
         $imageField = $fields->dataFieldByName('Icon');
         if ($imageField !== null) {
             $imageField->setFolderName('Icons');
@@ -76,43 +82,19 @@ class Icon extends DataObject
     /**
      * @return array<string, mixed>
      */
+    #[Override]
     public function searchableFields(): array
     {
+        /** @var array<string, mixed> $fields */
         $fields = parent::searchableFields();
         unset($fields['getPreview']);
         return $fields;
     }
 
-    /**
-     * @deprecated 2.0.1 Call the `getTag` method straight on the Icon object
-     */
-    public function forTemplate(): ?string
-    {
-        return $this->Icon->getTag();
-    }
-
     public function getPreview(): DBField
     {
-        return DBField::create_field(DBHTMLText::class, $this->Icon->getTag());
-    }
+        $tag = $this->Icon()->exists() ? $this->Icon()->getTag() : '';
 
-    /**
-     * Exists to support migration from the old model.
-     *
-     * @todo remove this when the migration task gets removed.
-     * @internal
-     *
-     * @param OldIconShape $data
-     */
-    public static function createFromOldDataset(array $data): self
-    {
-        return self::create([
-            'ID' => $data['ID'],
-            'ClassName' => self::class,
-            'LastEdited' => $data['LastEdited'],
-            'Created' => $data['Created'],
-            'Title' => $data['Title'],
-            'IconID' => $data['IconID'],
-        ]);
+        return DBField::create_field(DBHTMLText::class, $tag);
     }
 }

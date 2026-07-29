@@ -1,0 +1,8 @@
+name: silverstripe-icon-manager
+version: 6.0.0
+description: "SilverStripe Icon Manager — upload and manage custom SVG icons for SilverStripe 6"
+author: "WeDevelop"
+dependencies:
+  apm: []
+  mcp: []
+scripts: {}

@@ -1,0 +1,10 @@
+en:
+  WeDevelop\IconManager\Forms\IconDropdownField:
+    NO_ICON_SELECTED: 'No icon selected'
+    ICON_NOT_FOUND: 'Icon not created, please create it using the icon manager'
+    NO_PREVIEW_FILE: 'No icon preview file found, please attach a file to the icon'
+    LOADING_PREVIEW: 'Loading preview…'
+    PREVIEW_FAILED: 'Could not load the icon preview'
+  WeDevelop\IconManager\Models\Icon:
+    SINGULAR_NAME: 'Icon'
+    PLURAL_NAME: 'Icons'

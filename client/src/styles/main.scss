@@ -1,0 +1,40 @@
+// Four backslashes, not two — the loss happens in two separate steps, each of
+// which drops exactly one escape level, so writing what looks like "enough"
+// escaping for either step alone still isn't enough for both:
+//   1. Sass parses `\\` (an escaped backslash) into one literal backslash
+//      character, then re-serializes this now-unquoted attribute selector by
+//      emitting that character raw, without re-escaping it — so two backslashes
+//      in this source become only one in Sass's compiled CSS output.
+//   2. Vite's CSS minifier then parses *that* output as CSS in its own right:
+//      a single backslash followed by a letter is a valid CSS escape sequence
+//      for that letter, so the minifier consumes the backslash and keeps only
+//      the letter — one backslash in, zero backslashes out.
+// Two backslashes here would survive step 1 only to be silently eaten by step
+// 2, compiling away to zero and breaking the match against the real
+// `data-class="WeDevelop\IconManager\Models\Icon"` attribute (GridField.php
+// sets it from the raw, unescaped FQCN). Four backslashes here survive both
+// steps and leave the correctly-escaped `\\` (one literal backslash) that the
+// original hand-written CSS had. Verified directly against sass-embedded's
+// compiled output and the final built client/dist/styles/bundle.css.
+[data-class="WeDevelop\\\\IconManager\\\\Models\\\\Icon"] {
+  .col-getPreview {
+    img,
+    svg {
+      max-width: 24px;
+      max-height: 24px;
+    }
+  }
+}
+
+.icon-preview-holder {
+  margin-top: 5px;
+  padding: 16px;
+  border: 1px solid rgb(219 224 233);
+  border-radius: 4px;
+  background-color: rgb(255 255 255);
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}

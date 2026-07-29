@@ -1,0 +1,23 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+    ignore:
+      # TypeScript 7 is released but this module does not support it yet.
+      # Hold on the 6.x line until Biome and our own type-level code are
+      # verified against it. Drop this ignore as part of the TS 7 migration.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /.docker
+    schedule:
+      interval: weekly
