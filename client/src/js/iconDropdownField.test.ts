@@ -11,10 +11,10 @@ const ENDPOINT = '/admin/icons/field/IconID/preview'
 let initIconDropdowns: typeof import('./iconDropdownField').initIconDropdowns
 let observeIconDropdowns: typeof import('./iconDropdownField').observeIconDropdowns
 
-function renderField(id: string): HTMLSelectElement {
+function renderField(id: string, messageAttributes = ''): HTMLSelectElement {
   const holder = document.createElement('div')
   holder.innerHTML = `
-    <select id="${id}" class="icondropdown" data-icon-preview-endpoint="${ENDPOINT}">
+    <select id="${id}" class="icondropdown" data-icon-preview-endpoint="${ENDPOINT}"${messageAttributes}>
       <option value=""></option>
       <option value="7">Star</option>
       <option value="9">Heart</option>
@@ -41,10 +41,11 @@ function mockFetch(body: string): ReturnType<typeof vi.fn> {
 }
 
 async function change(select: HTMLSelectElement, value: string): Promise<void> {
+  const loading = select.dataset.iconPreviewLoading ?? 'Loading preview…'
   select.value = value
   select.dispatchEvent(new Event('change', { bubbles: true }))
   await vi.waitFor(() => {
-    expect(preview(select.id)).not.toBe('Loading preview…')
+    expect(preview(select.id)).not.toBe(loading)
   })
 }
 
@@ -108,6 +109,40 @@ describe('iconDropdownField', () => {
 
     expect(fetchMock).not.toHaveBeenCalled()
     expect(preview('Form_Field_IconID')).toBe('No icon selected')
+  })
+
+  it('lets the change event bubble past the field', async () => {
+    // jQuery.changetracker binds `change.changetracker` delegated on
+    // `.cms-edit-form`. Swallowing the event here would stop the CMS marking the
+    // form dirty, so an unsaved icon change would be discarded without a prompt.
+    const select = renderField('Form_Field_IconID')
+    mockFetch('<svg></svg>')
+    initIconDropdowns(document)
+    const onAncestor = vi.fn()
+    document.body.addEventListener('change', onAncestor)
+
+    await change(select, '7')
+    document.body.removeEventListener('change', onAncestor)
+
+    expect(onAncestor).toHaveBeenCalledTimes(1)
+  })
+
+  it('prefers the translated messages the server passed over the built-in English', async () => {
+    const select = renderField(
+      'Form_Field_IconID',
+      ' data-icon-preview-empty="Geen icoon geselecteerd" data-icon-preview-error="Kon de preview niet laden"',
+    )
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.resolve(new Response('nope', { status: 500 }))),
+    )
+    initIconDropdowns(document)
+
+    await change(select, '7')
+    expect(preview('Form_Field_IconID')).toBe('Kon de preview niet laden')
+
+    await change(select, '')
+    expect(preview('Form_Field_IconID')).toBe('Geen icoon geselecteerd')
   })
 
   it('shows an error message when the request fails', async () => {

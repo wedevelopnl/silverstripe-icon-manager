@@ -5,6 +5,9 @@
 const SELECTOR = 'select[data-icon-preview-endpoint]'
 const BOUND_FLAG = 'iconPreviewBound'
 
+// Fallbacks only. The CMS is translatable, so IconDropdownField::getAttributes()
+// emits the translated strings as data attributes; these apply to a field
+// rendered without them.
 const LOADING_MESSAGE = 'Loading preview…'
 const EMPTY_MESSAGE = 'No icon selected'
 const ERROR_MESSAGE = 'Could not load the icon preview'
@@ -15,6 +18,8 @@ const ERROR_MESSAGE = 'Could not load the icon preview'
 // whole Pjax session while tearing down and recreating the DOM on every
 // navigation, so a cache keyed on DOM-node identity would lose every hit as
 // soon as a field's form re-rendered — exactly the case this cache exists for.
+// Known trade-off: nothing invalidates it, so replacing an icon's file in the
+// Icons admin leaves a stale preview until the next full page load.
 const cache = new Map<string, string>()
 
 function holderFor(select: HTMLSelectElement): HTMLElement | null {
@@ -50,16 +55,20 @@ async function updatePreview(select: HTMLSelectElement): Promise<void> {
   }
 
   if (select.value === '') {
-    holder.innerHTML = EMPTY_MESSAGE
+    holder.textContent = select.dataset.iconPreviewEmpty ?? EMPTY_MESSAGE
     return
   }
 
-  holder.innerHTML = LOADING_MESSAGE
+  holder.textContent = select.dataset.iconPreviewLoading ?? LOADING_MESSAGE
 
   try {
+    // innerHTML, because the response is the icon's rendered tag. Inline event
+    // handlers on injected markup (<svg onload>) would run, so this is only safe
+    // while _config/filetypes.yml keeps the `wedevelop/icon` category on file
+    // types that sanitise on write. Widening that config means sanitising here.
     holder.innerHTML = await fetchPreview(`${endpoint}?icon=${encodeURIComponent(select.value)}`)
   } catch {
-    holder.innerHTML = ERROR_MESSAGE
+    holder.textContent = select.dataset.iconPreviewError ?? ERROR_MESSAGE
   }
 }
 
@@ -74,10 +83,11 @@ export function initIconDropdowns(root: ParentNode): void {
     }
 
     select.dataset[BOUND_FLAG] = 'true'
-    select.addEventListener('change', (event) => {
-      // The CMS binds its own change handlers higher up the tree; stop the
-      // event so selecting an icon does not trigger unrelated form behaviour.
-      event.stopPropagation()
+    // Never stop propagation here: jQuery.changetracker binds
+    // `change.changetracker` delegated on `.cms-edit-form`, so the event has to
+    // bubble out of the field or the CMS never marks the form dirty and lets the
+    // user navigate away from an unsaved icon change without a prompt.
+    select.addEventListener('change', () => {
       void updatePreview(select)
     })
   }
@@ -91,8 +101,13 @@ export function initIconDropdowns(root: ParentNode): void {
  * content, so this uses a plain MutationObserver.
  */
 export function observeIconDropdowns(target: Node): MutationObserver {
-  const observer = new MutationObserver(() => {
-    initIconDropdowns(document)
+  const observer = new MutationObserver((mutations) => {
+    // The CMS mutates the DOM constantly (GridField redraws, TinyMCE, toasts).
+    // Only added nodes can introduce an unbound field, so skip the rest rather
+    // than re-querying the whole document on every batch.
+    if (mutations.some((mutation) => mutation.addedNodes.length > 0)) {
+      initIconDropdowns(document)
+    }
   })
 
   observer.observe(target, { childList: true, subtree: true })

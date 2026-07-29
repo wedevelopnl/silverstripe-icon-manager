@@ -70,6 +70,13 @@ class IconDropdownField extends DropdownField
         $form = $this->getForm();
         if ($form !== null) {
             $attributes['data-icon-preview-endpoint'] = $this->Link('preview');
+
+            // The script replaces the holder contents the template rendered, so
+            // it needs the same translated strings — otherwise the first change
+            // event flips a translated CMS back to English.
+            $attributes['data-icon-preview-empty'] = _t(self::class . '.NO_ICON_SELECTED', 'No icon selected');
+            $attributes['data-icon-preview-loading'] = _t(self::class . '.LOADING_PREVIEW', 'Loading preview…');
+            $attributes['data-icon-preview-error'] = _t(self::class . '.PREVIEW_FAILED', 'Could not load the icon preview');
         }
 
         return $attributes;

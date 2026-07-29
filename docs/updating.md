@@ -18,6 +18,9 @@ unchanged — run `dev/build` as usual and your records are where they were.
   you are still on 1.0.x, upgrade to 4.1 first and run that task there.
 * `Icon::forTemplate()`, deprecated since 2.0.1, has been removed. Call
   `$Icon.Icon.Tag` in templates, or `$icon->Icon()->getTag()` in PHP.
+* `Icon::createFromOldDataset()` has been removed. It was marked `@internal` and
+  existed only to feed `MigrateToNewIconModelTask`, but it was `public static`,
+  so it is listed here for completeness.
 
 ### SVG support
 

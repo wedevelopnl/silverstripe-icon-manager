@@ -26,6 +26,18 @@ class IconDropdownFieldTest extends SapphireTest
         $this->assertStringContainsString('preview', (string) $attributes['data-icon-preview-endpoint']);
     }
 
+    public function testExposesTheTranslatablePreviewMessagesToTheScript(): void
+    {
+        $field = IconDropdownField::create('IconID');
+        Form::create(new IconDropdownFieldTestController(), 'TestForm', FieldList::create($field), FieldList::create());
+
+        $attributes = $field->getAttributes();
+
+        $this->assertSame('No icon selected', $attributes['data-icon-preview-empty'] ?? null);
+        $this->assertSame('Loading preview…', $attributes['data-icon-preview-loading'] ?? null);
+        $this->assertSame('Could not load the icon preview', $attributes['data-icon-preview-error'] ?? null);
+    }
+
     public function testOmitsThePreviewEndpointWhenDetachedFromAForm(): void
     {
         $this->assertArrayNotHasKey(
