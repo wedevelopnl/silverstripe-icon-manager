@@ -65,7 +65,20 @@ class Page extends SiteTree
 
 ## Rendering icon in template
 
-You can simply render a icon by using the `$Icon` (or the name of your relation) property in the `.ss` template.
+How you render the icon in a `.ss` template depends on what your relation points to.
 
-`$Icon` renders the icon via its file's `getTag()`. For SVG icons, wrap the
-output in a `<span>` with your own classes to control size and colour.
+If your `$has_one` points directly at a `File` (or `Svg`) — not through this
+module's `Icon` model — then the bare relation name renders it, because
+`File::forTemplate()` calls `getTag()` for you.
+
+The example above instead points at the `Icon` wrapper model
+(`'Icon' => Icon::class`). That model does not override `forTemplate()`, so a
+bare `$Icon` tries to resolve a template for the `Icon` class, and none ships
+with this module. Reach through to the file explicitly instead:
+
+`$Icon.Icon.Tag`
+
+The first `Icon` is your relation name; the second is the wrapper model's own
+`Icon` has_one to the underlying `File`; `Tag` calls its `getTag()`. For SVG
+icons, wrap the output in a `<span>` with your own classes to control size and
+colour.
