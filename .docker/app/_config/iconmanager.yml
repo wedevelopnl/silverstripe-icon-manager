@@ -1,0 +1,12 @@
+# Testbed-only app config, mirroring the consumer snippet in
+# docs/configuration.md verbatim so E2E covers a raster icon type and the
+# documented way of enabling one.
+---
+Name: app-silverstripeiconmanager
+After: '#silverstripeiconmanager-assetsfiletypes'
+---
+
+SilverStripe\Assets\File:
+  app_categories:
+    'wedevelop/icon':
+      - png
