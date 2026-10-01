@@ -22,6 +22,7 @@ added and managed.
 
 * [Configuration](docs/configuration.md)
 * [Updating](docs/updating.md)
+* [Changelog](CHANGELOG.md)
 
 ## License
 
