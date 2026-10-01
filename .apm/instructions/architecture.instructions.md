@@ -20,8 +20,9 @@ client/dist/           Vite build output (committed, exposed)
 tests/Unit/            PHPUnit unit tests (no DB/framework)
 tests/Integration/     PHPUnit integration tests (full SS env)
 tests/Functional/      PHPUnit functional tests
-tests/E2E/             Playwright specs, setup and test assets
+tests/E2E/             Playwright specs, support helpers, setup and test assets
 .docker/               Docker dev env: FrankenPHP + Caddy + MySQL 8
+.docker/app/           Testbed project: config, Page class and Page.ss
 ```
 
 - PSR-4: `WeDevelop\IconManager\` → `src/`; `WeDevelop\IconManager\Tests\` → `tests/`

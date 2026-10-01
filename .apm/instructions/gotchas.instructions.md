@@ -13,9 +13,9 @@ applyTo: '**/*'
   source. Run `npm run build` and commit the output.
 - **This module registers no E2E fixtures, deliberately.** `FixtureLoader` requires
   every fixture to create a `SiteTree` record, and its `reset()` only archives
-  pages — non-page DataObjects stack up across runs. The E2E surface here is a
-  `ModelAdmin` with no page, so the spec seeds itself through the CMS UI with a
-  per-run unique title. The `silverstripe-e2e` dependency stays for
+  pages — non-page DataObjects stack up across runs, and every journey starts
+  with an `Icon` record. Specs seed themselves through the CMS UI with per-run
+  unique titles (`tests/E2E/support/icons.ts`). The `silverstripe-e2e` dependency stays for
   `authenticateAdmin` and for the `Session.strict_user_agent_check: false` its own
   config applies.
 - **The e2e module's `attach_image` post-action hardcodes `Image::create()`**, so
@@ -43,5 +43,16 @@ applyTo: '**/*'
   `add_rule_for_controller()` skips any controller whose `url_segment` config is
   empty — so `_config/dev.yml` is what keeps `/admin/icon-demo` out of prod, not
   `ignore_menuitem`.
+- **The testbed project (`.docker/app/{_config,src,templates}`) mirrors
+  `docs/configuration.md` verbatim** — png in `wedevelop/icon`, the `Page` with a
+  `has_one` Icon, `$Icon.Icon.Tag` in `Page.ss`. Change docs and testbed together.
+  Bind-mounted into `/app`, never `/module`, so no duplicate `Page` class.
+- **Testbed `Page::getCMSFields()` stays untyped** — `ErrorPage extends Page` with
+  an untyped override; a return type is a fatal error on container start.
+- **Testbed `Page.ss` must render `$Content` and `$Form`** — `Security` renders the
+  frontend login form through it; without them `authenticateAdmin` times out.
+- **A new page keeps its `new-page-N` URL segment** after the title changes
+  (regenerated only while it equals bare `new-page`). E2E reads the segment back
+  from `input[name="URLSegment"]`; never derive it from the title.
 - **CLAUDE.md / AGENTS.md / GEMINI.md are generated** from `.apm/instructions/` on
   every `apm compile`. Edit the sources, never the generated files.
