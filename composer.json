@@ -18,7 +18,7 @@
         "silverstripe/asset-admin": "^3.0",
         "silverstripe/framework": "^6.0",
         "silverstripe/vendor-plugin": "^3.0",
-        "wedevelopnl/silverstripe-svg-image": "^6.0@dev"
+        "wedevelopnl/silverstripe-svg-image": "^6.0"
     },
     "_comment_require_dev": "silverstripe-e2e is needed in the HOST vendor, not just the container: tests/E2E/tsconfig.json aliases @wedevelop/e2e to vendor/wedevelopnl/silverstripe-e2e/client/playwright/index.ts, and both `npm run typecheck` and Playwright resolve it from there. Keep this pin in sync with .docker/app/composer.json.",
     "require-dev": {
