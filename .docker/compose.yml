@@ -15,6 +15,7 @@ services:
       - ../client/dist:/module/client/dist:ro
       - ../lang:/module/lang:ro
       - ../templates:/module/templates:ro
+      - ./app/_config:/app/_config:ro
       - ../coverage:/app/coverage
       - vendor:/app/vendor
     healthcheck:
