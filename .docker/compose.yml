@@ -15,7 +15,11 @@ services:
       - ../client/dist:/module/client/dist:ro
       - ../lang:/module/lang:ro
       - ../templates:/module/templates:ro
+      # Testbed project code. Mounted at /app, never under /module, so the
+      # module's class manifest cannot pick up a duplicate Page class.
       - ./app/_config:/app/_config:ro
+      - ./app/src:/app/src:ro
+      - ./app/templates:/app/templates:ro
       - ../coverage:/app/coverage
       - vendor:/app/vendor
     healthcheck:

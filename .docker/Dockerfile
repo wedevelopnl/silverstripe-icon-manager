@@ -19,13 +19,6 @@ WORKDIR /app
 
 COPY app/composer.json /app/composer.json
 
-# SilverStripe requires Page and PageController classes in the project.
-# Generated here (not stored in the repo) to avoid duplicate-class detection
-# when the module is symlinked into vendor/.
-RUN mkdir -p /app/src /app/_config \
-    && printf '<?php\n\nuse SilverStripe\\CMS\\Model\\SiteTree;\n\nclass Page extends SiteTree\n{\n}\n' > /app/src/Page.php \
-    && printf '<?php\n\nuse SilverStripe\\CMS\\Controllers\\ContentController;\n\nclass PageController extends ContentController\n{\n}\n' > /app/src/PageController.php
-
 COPY app/phpunit.xml.dist /app/phpunit.xml.dist
 COPY app/phpstan.neon.dist /app/phpstan.neon.dist
 COPY app/rector.php /app/rector.php
