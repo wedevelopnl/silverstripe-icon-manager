@@ -30,7 +30,7 @@
         "phpunit/phpunit": "11.5.56",
         "rregeer/phpunit-coverage-check": "0.3.1",
         "tomasvotruba/type-coverage": "2.2.1",
-        "wedevelopnl/silverstripe-e2e": "0.1.2",
+        "wedevelopnl/silverstripe-e2e": "0.2.0",
         "wernerkrauss/silverstripe-rector": "1.3.0"
     },
     "autoload-dev": {
