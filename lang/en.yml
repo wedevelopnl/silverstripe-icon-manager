@@ -1,4 +1,6 @@
 en:
+  WeDevelop\IconManager\Admins\IconModelAdmin:
+    MENUTITLE: 'Icons'
   WeDevelop\IconManager\Forms\IconDropdownField:
     NO_ICON_SELECTED: 'No icon selected'
     ICON_NOT_FOUND: 'Icon not created, please create it using the icon manager'
@@ -6,5 +8,11 @@ en:
     LOADING_PREVIEW: 'Loading preview…'
     PREVIEW_FAILED: 'Could not load the icon preview'
   WeDevelop\IconManager\Models\Icon:
-    SINGULAR_NAME: 'Icon'
-    PLURAL_NAME: 'Icons'
+    SINGULARNAME: 'Icon'
+    PLURALNAME: 'Icons'
+    PLURALS:
+      one: 'An icon'
+      other: '{count} icons'
+    db_Title: 'Title'
+    has_one_Icon: 'Icon'
+    PREVIEW: 'Preview'

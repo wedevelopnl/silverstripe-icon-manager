@@ -1,0 +1,18 @@
+nl:
+  WeDevelop\IconManager\Admins\IconModelAdmin:
+    MENUTITLE: 'Iconen'
+  WeDevelop\IconManager\Forms\IconDropdownField:
+    NO_ICON_SELECTED: 'Geen icoon geselecteerd'
+    ICON_NOT_FOUND: 'Icoon niet aangemaakt, maak het aan via het iconenbeheer'
+    NO_PREVIEW_FILE: 'Geen voorbeeldbestand voor het icoon gevonden, koppel een bestand aan het icoon'
+    LOADING_PREVIEW: 'Voorbeeld laden…'
+    PREVIEW_FAILED: 'Het voorbeeld van het icoon kon niet worden geladen'
+  WeDevelop\IconManager\Models\Icon:
+    SINGULARNAME: 'Icoon'
+    PLURALNAME: 'Iconen'
+    PLURALS:
+      one: 'Een icoon'
+      other: '{count} iconen'
+    db_Title: 'Titel'
+    has_one_Icon: 'Icoon'
+    PREVIEW: 'Voorbeeld'

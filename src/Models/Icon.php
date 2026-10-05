@@ -50,11 +50,14 @@ class Icon extends DataObject
     ];
 
     /**
-     * @var array<string, string>
+     * Labels come from fieldLabels(): summaryFields() only translates an entry
+     * whose label equals its key.
+     *
+     * @var array<string>
      */
     private static array $summary_fields = [
-        'Title' => 'Title',
-        'getPreview' => 'Preview',
+        'Title',
+        'getPreview',
     ];
 
     #[Override]
@@ -70,6 +73,19 @@ class Icon extends DataObject
         }
 
         return $fields;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    #[Override]
+    public function fieldLabels($includerelations = true): array
+    {
+        /** @var array<string, string> $labels */
+        $labels = parent::fieldLabels($includerelations);
+        $labels['getPreview'] = _t(self::class . '.PREVIEW', 'Preview');
+
+        return $labels;
     }
 
     /**
