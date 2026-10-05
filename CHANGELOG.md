@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 The major version tracks the SilverStripe major.
 
+## [Unreleased]
+
+### Added
+
+- Dutch translation (`lang/nl.yml`).
+- Translatable `Icons` menu title, `Icon` field labels and the grid's `Preview`
+  column header.
+
+### Changed
+
+- `IconDropdownField`'s `$title` now defaults to `null`, which resolves to the
+  translated `Icon` model name instead of a hardcoded English `'Icon'`.
+
+### Fixed
+
+- The `Icon` model names are now actually translated: `lang/en.yml` used the
+  keys `SINGULAR_NAME`/`PLURAL_NAME`, which SilverStripe never reads
+  (`SINGULARNAME`/`PLURALNAME`).
+
 ## [6.0.0] - 2026-10-01
 
 First release for SilverStripe 6. There is no 5.x. See the

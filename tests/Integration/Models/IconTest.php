@@ -7,6 +7,7 @@ namespace WeDevelop\IconManager\Tests\Integration\Models;
 use SilverStripe\Assets\File;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\i18n\i18n;
 use WeDevelop\IconManager\Models\Icon;
 
 class IconTest extends SapphireTest
@@ -28,6 +29,17 @@ class IconTest extends SapphireTest
     public function testSearchableFieldsExcludesThePreviewColumn(): void
     {
         $this->assertArrayNotHasKey('getPreview', Icon::create()->searchableFields());
+    }
+
+    public function testTranslatesTheModelNamesAndGridColumns(): void
+    {
+        i18n::with_locale('nl_NL', function (): void {
+            $icon = Icon::create();
+
+            $this->assertSame('Icoon', $icon->i18n_singular_name());
+            $this->assertSame('Iconen', $icon->i18n_plural_name());
+            $this->assertSame(['Title' => 'Titel', 'getPreview' => 'Voorbeeld'], $icon->summaryFields());
+        });
     }
 
     public function testGetPreviewIsEmptyWhenNoFileIsAttached(): void

@@ -19,9 +19,13 @@ class IconDropdownField extends DropdownField
         'preview',
     ];
 
-    public function __construct(string $name, string $title = 'Icon')
+    public function __construct(string $name, ?string $title = null)
     {
-        parent::__construct($name, $title, Icon::get()->sort(['Title' => 'ASC'])->map()->toArray());
+        parent::__construct(
+            $name,
+            $title ?? Icon::singleton()->i18n_singular_name(),
+            Icon::get()->sort(['Title' => 'ASC'])->map()->toArray(),
+        );
 
         $this->setHasEmptyDefault(true);
 

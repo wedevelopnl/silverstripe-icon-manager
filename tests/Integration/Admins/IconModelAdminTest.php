@@ -7,12 +7,18 @@ namespace WeDevelop\IconManager\Tests\Integration\Admins;
 use ReflectionProperty;
 use SilverStripe\Assets\File;
 use SilverStripe\Dev\SapphireTest;
+use SilverStripe\i18n\i18n;
 use WeDevelop\IconManager\Admins\IconModelAdmin;
 use WeDevelop\IconManager\Models\Icon;
 
 class IconModelAdminTest extends SapphireTest
 {
     protected $usesDatabase = true;
+
+    public function testTranslatesTheMenuTitle(): void
+    {
+        $this->assertSame('Iconen', i18n::with_locale('nl_NL', fn (): string => IconModelAdmin::menu_title()));
+    }
 
     public function testGetListEagerLoadsTheIconFile(): void
     {

@@ -9,6 +9,7 @@ use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Dev\TestOnly;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
+use SilverStripe\i18n\i18n;
 use WeDevelop\IconManager\Forms\IconDropdownField;
 
 class IconDropdownFieldTest extends SapphireTest
@@ -36,6 +37,29 @@ class IconDropdownFieldTest extends SapphireTest
         $this->assertSame('No icon selected', $attributes['data-icon-preview-empty'] ?? null);
         $this->assertSame('Loading preview…', $attributes['data-icon-preview-loading'] ?? null);
         $this->assertSame('Could not load the icon preview', $attributes['data-icon-preview-error'] ?? null);
+    }
+
+    public function testDefaultsTheTitleToTheTranslatedIconName(): void
+    {
+        $this->assertSame('Icon', IconDropdownField::create('IconID')->Title());
+        $this->assertSame(
+            'Icoon',
+            i18n::with_locale('nl_NL', fn (): string => (string) IconDropdownField::create('IconID')->Title()),
+        );
+    }
+
+    public function testExposesTheDutchPreviewMessagesInADutchCms(): void
+    {
+        $attributes = i18n::with_locale('nl_NL', function (): array {
+            $field = IconDropdownField::create('IconID');
+            Form::create(new IconDropdownFieldTestController(), 'TestForm', FieldList::create($field), FieldList::create());
+
+            return $field->getAttributes();
+        });
+
+        $this->assertSame('Geen icoon geselecteerd', $attributes['data-icon-preview-empty'] ?? null);
+        $this->assertSame('Voorbeeld laden…', $attributes['data-icon-preview-loading'] ?? null);
+        $this->assertSame('Het voorbeeld van het icoon kon niet worden geladen', $attributes['data-icon-preview-error'] ?? null);
     }
 
     public function testOmitsThePreviewEndpointWhenDetachedFromAForm(): void
